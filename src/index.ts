@@ -1,12 +1,15 @@
-import { handler } from "./handler";
+import { handler } from "./handler/import";
+import fs from "fs";
 
-export const onPreBuild = async () => {
-  // TODO - Make the plugin create an edge function, that calls the handler imported above
-  // Current suggestion:
-  // Step 1.
-  // Update .toml of the project this plugin is used in to add definition for edge function to handle email requests
-  // Step 2.
-  // Start calling the edge function to see if it is reading the email templates
-  // Step 3.
-  // Update the handler function to actually call an email service like sendgrid or twilio to see if we can send emails
+export const onPreBuild = async ({
+  constants,
+}: {
+  constants: { FUNCTIONS_SRC: string };
+}) => {
+  fs.mkdirSync("./netlify/functions/email/", { recursive: true });
+  // This is a real hack and there may be a better way to inject a function!
+  fs.writeFileSync(
+    `./netlify/functions/email/index.ts`,
+    `import { handler } from "@netlify/plugin-emails/lib/handler/index"; export { handler };`
+  );
 };
