@@ -13,15 +13,14 @@ const walkDir = (dir: string, callback: (path: string) => void) => {
 export const onPreBuild = async () => {
   walkDir("./emails", (filePath) => {
     const fileContents = fs.readFileSync(filePath, "utf8");
-    console.log(filePath, fileContents);
     const fileType = filePath.split(".").pop();
     var filename = filePath.replace(/^.*[\\\/]/, "").split(".")[0];
     if (filename === "index") {
       if (fileType === "mjml") {
-        console.log(mjml(fileContents).html, "contents");
+        console.log("Printing .mjml contents", mjml(fileContents).html);
       }
       if (fileType === "html") {
-        console.log(fileContents, "html contents");
+        console.log("Printing .html contents", fileContents);
       }
     }
   });
