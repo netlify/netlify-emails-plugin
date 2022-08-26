@@ -1,0 +1,93 @@
+Arguments: 
+  /Users/lewisthorley/.nvm/versions/node/v16.16.0/bin/node /usr/local/bin/yarn
+
+PATH: 
+  /Users/lewisthorley/.nvm/versions/node/v16.16.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/2.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/lewisthorley/.nvm/versions/node/v16.16.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/2.7/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.16.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  SyntaxError: /Users/lewisthorley/Projects/simple-emails-plugin/package.json: Unexpected token } in JSON at position 437
+      at JSON.parse (<anonymous>)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "@netlify/emails-plugin",
+    "version": "1.0.0-beta.1",
+    "description": "Scans the email directory and sends email templates to the email service",
+    "main": "lib/index.js",
+    "files": [
+      "lib/**/*",
+      "manifest.yml"
+    ],
+    "dependencies": {
+      "pa11y": "^6.2.3",
+      "path-type": "^4.0.0",
+      "picocolors": "^1.0.0",
+      "puppeteer": "~9.1.1",
+      "readdirp": "^3.6.0",
+      "tslib": "^2.4.0",
+      "mjml": "4.13.0",
+    },
+    "scripts": {
+      "build": "tsc",
+      "watch": "tsc --watch",
+      "test": "jest"
+    },
+    "keywords": [
+      "emails",
+      "netlify-plugin"
+    ],
+    "author": "Lewis Thorley",
+    "contributors": [
+      "Lewis Thorley"
+    ],
+    "license": "MIT",
+    "engines": {
+      "node": ">= 16.0.0",
+      "npm": ">= 7.10.0"
+    },
+    "devDependencies": {
+      "@netlify/build": "^27.1.4",
+      "@netlify/eslint-config-node": "^6.0.0",
+      "@types/jest": "^28.1.1",
+      "eslint": "^8.17.0",
+      "eslint-config-prettier": "^8.5.0",
+      "@types/mjml": "^4.7.0",
+      "jest": "^28.1.1",
+      "lint-staged": "^13.0.1",
+      "prettier": "^2.7.0",
+      "ts-jest": "^28.0.5",
+      "typescript": "^4.7.3"
+    },
+    "repository": "url - tbc",
+    "bugs": {
+      "url": "url/issues - tbc"
+    },
+    "lint-staged": {
+      "src/**/*.js": [
+        "npm run test:staged"
+      ],
+      "*.js": [
+        "eslint --cache --fix",
+        "prettier --write"
+      ]
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

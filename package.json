@@ -1,0 +1,58 @@
+{
+  "name": "@netlify/emails-plugin",
+  "version": "1.0.0-beta.1",
+  "description": "Scans the /email directory and sends email templates to the email service",
+  "main": "lib/index.js",
+  "files": [
+    "lib/**/*",
+    "manifest.yml"
+  ],
+  "dependencies": {
+    "tslib": "^2.4.0",
+    "mjml": "4.13.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "jest"
+  },
+  "keywords": [
+    "emails",
+    "netlify-plugin"
+  ],
+  "author": "Lewis Thorley",
+  "contributors": [
+    "Lewis Thorley"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 16.0.0",
+    "npm": ">= 7.10.0"
+  },
+  "devDependencies": {
+    "@netlify/build": "^27.1.4",
+    "@netlify/eslint-config-node": "^6.0.0",
+    "@types/jest": "^28.1.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "@types/mjml": "^4.7.0",
+    "jest": "^28.1.1",
+    "lint-staged": "^13.0.1",
+    "prettier": "^2.7.0",
+    "ts-jest": "^28.0.5",
+    "typescript": "^4.7.3"
+  },
+  "repository": "url - tbc",
+  "bugs": {
+    "url": "url/issues - tbc"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "npm run test:staged"
+    ],
+    "*.js": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ]
+  }
+}
