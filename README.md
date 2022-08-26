@@ -7,6 +7,7 @@ In its current form, this project is very much in the development phase and is o
 ## Linking the package locally
 
 - Clone this repository locally
+- Run `yarn build`
 - Navigate to your own netlify application (suggest a hobby project)
 - Add the plugin to the `netlify.toml` of your own project, specificying the local path:
   ```
