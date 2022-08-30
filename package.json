@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "keywords": [
     "emails",
