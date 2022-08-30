@@ -15,7 +15,7 @@ export const getEmailFromPath = (path: string) => {
     if (filename === "index") {
       if (fileType === "html") {
         fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
-        console.log("Printing .html contents", fileContents);
+        console.log("Printing the .html contents", fileContents);
       }
     }
   });
