@@ -27,7 +27,7 @@ In its current form, this project is very much in the development phase and is o
 - Add the following file with some basic html to your hobby project `./emails/welcome/index.html`
 - Run `netlify build`
 - Run `netlify dev`
-- Visit your site locally and append `/email/welcome` to the address
+- Visit your site locally and append `/.netlify/functions/email/welcome` to the address
 - This will trigger the email function and you should see logs printing the html content
 
 ## Making changes to the package and testing locally

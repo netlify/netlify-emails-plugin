@@ -2,7 +2,7 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 
 export const getEmailFromPath = (path: string) => {
-  console.log(`Getting template for : ${path}`);
+  console.log(`Getting template for: ${path}`);
 
   let fileContents: string | undefined = undefined;
   fs.readdirSync(path).forEach((file) => {
@@ -31,7 +31,6 @@ const handler: Handler = async (event, _) => {
   const fileContents = getEmailFromPath(fullEmailPath);
 
   // TODO - Next step is to use the fileContents (the template) and pass in parameters to template and replace handlebars
-
   return {
     statusCode: 200,
     body: JSON.stringify({ message: fileContents }),

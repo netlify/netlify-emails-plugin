@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install"
   },
   "keywords": [
     "emails",
@@ -39,8 +40,10 @@
     "lint-staged": "^13.0.1",
     "prettier": "^2.7.0",
     "ts-jest": "^28.0.5",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.3",
+    "husky": "^8.0.0"
   },
+  "postinstall": "husky install",
   "repository": "url - tbc",
   "bugs": {
     "url": "url/issues - tbc"
