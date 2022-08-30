@@ -6,7 +6,7 @@ export const onPreBuild = async ({
 }: {
   constants: { FUNCTIONS_SRC: string };
 }) => {
-  fs.mkdirSync("./netlify/functions/email/");
+  fs.mkdirSync("./netlify/functions/email/", { recursive: true });
   // This is a real hack and there may be a better way to inject a function!
   fs.writeFileSync(
     `./netlify/functions/email/index.ts`,
