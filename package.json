@@ -9,13 +9,13 @@
   ],
   "dependencies": {
     "@netlify/functions": "^1.2.0",
+    "husky": "^8.0.1",
     "tslib": "^2.4.0"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "jest",
-    "prepare": "husky install"
+    "test": "jest"
   },
   "keywords": [
     "emails",
@@ -36,7 +36,6 @@
     "@types/jest": "^28.1.1",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
-    "husky": "^8.0.1",
     "jest": "^28.1.1",
     "lint-staged": "^13.0.1",
     "prettier": "^2.7.0",
@@ -46,7 +45,7 @@
   "postinstall": "husky install",
   "husky": {
     "hooks": {
-      "pre-commit": "cross-env lint-staged",
+      "pre-commit": "cross-env lint-staged echo \"[Husky] pre-commit\"",
       "pre-push": "cross-env lint-staged yarn build"
     }
   },
