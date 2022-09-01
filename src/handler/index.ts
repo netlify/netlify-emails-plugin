@@ -39,20 +39,20 @@ const handler: Handler = async (event, _) => {
   const renderedTemplate = template(params);
 
   const serverToken = process.env.EMAIL_TOKEN as string;
-  console.log({ serverToken });
   const client = new ServerClient(serverToken);
 
   client.sendEmail({
     From: "lewis@reflr.io",
     To: "lewis@reflr.io",
-    Subject: "Test",
+    Subject: params?._subject ?? "",
     HtmlBody: renderedTemplate,
   });
 
-  // TODO - Next step is to use the fileContents (the template) and pass in parameters to template and replace handlebars
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: renderedTemplate }),
+    body: JSON.stringify({
+      message: `Email sent using template: ./emails/${emailPath}`,
+    }),
   };
 };
 
