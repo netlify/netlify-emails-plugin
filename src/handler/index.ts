@@ -1,5 +1,6 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
+import Handlebars from "handlebars";
 
 export const getEmailFromPath = (path: string) => {
   console.log(`Getting template for: ${path}`);
@@ -24,16 +25,23 @@ export const getEmailFromPath = (path: string) => {
 };
 
 const handler: Handler = async (event, _) => {
-  const emailPath = event.rawUrl.split(".netlify/functions/email/")[1];
-
+  const emailPath = event.rawUrl.match(/email\/([A-z]*)[\?]?/)?.[1];
+  if (!emailPath) {
+    return {
+      statusCode: 500
+    }
+  }
   const fullEmailPath = `./emails/${emailPath}`;
-
+  const params = event.queryStringParameters;
   const fileContents = getEmailFromPath(fullEmailPath);
+  const template = Handlebars.compile(fileContents);
+  const renderedTemplate = template(params);
 
+  
   // TODO - Next step is to use the fileContents (the template) and pass in parameters to template and replace handlebars
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: fileContents }),
+    body: JSON.stringify({ message: renderedTemplate }),
   };
 };
 
