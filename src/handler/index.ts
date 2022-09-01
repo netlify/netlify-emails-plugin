@@ -1,5 +1,6 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
+import { ServerClient } from "postmark";
 
 export const getEmailFromPath = (path: string) => {
   console.log(`Getting template for: ${path}`);
@@ -29,6 +30,16 @@ const handler: Handler = async (event, _) => {
   const fullEmailPath = `./emails/${emailPath}`;
 
   const fileContents = getEmailFromPath(fullEmailPath);
+
+  const serverToken = process.env.EMAIL_TOKEN as string;
+  const client = new ServerClient(serverToken);
+
+  client.sendEmail({
+    From: "lewis@reflr.io",
+    To: "lewis@reflr.io",
+    Subject: "Test",
+    HtmlBody: fileContents,
+  });
 
   // TODO - Next step is to use the fileContents (the template) and pass in parameters to template and replace handlebars
   return {
