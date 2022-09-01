@@ -9,6 +9,7 @@
   ],
   "dependencies": {
     "@netlify/functions": "^1.2.0",
+    "handlebars": "^4.7.7",
     "postmark": "^3.0.14",
     "tslib": "^2.4.0"
   },
