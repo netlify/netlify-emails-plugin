@@ -36,6 +36,7 @@
     "@netlify/build": "^27.1.4",
     "@netlify/eslint-config-node": "^6.0.0",
     "@types/jest": "^28.1.1",
+    "@types/node": "^18.7.14",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "husky": "^8.0.0",
