@@ -1,15 +1,25 @@
 import { handler } from "./handler/import";
 import fs from "fs";
+import { join } from "path";
 
-export const onPreBuild = async ({
-  constants,
-}: {
-  constants: { FUNCTIONS_SRC: string };
-}) => {
-  fs.mkdirSync("./netlify/functions/email/", { recursive: true });
-  // This is a real hack and there may be a better way to inject a function!
-  fs.writeFileSync(
-    `./netlify/functions/email/index.ts`,
-    `import { handler } from "@netlify/plugin-emails/lib/handler/index"; export { handler };`
+export const onPreBuild = () => {
+  const emailFunctionDirectory = join(
+    ".netlify",
+    "functions-internal",
+    "email"
+  );
+  fs.mkdirSync(emailFunctionDirectory, {
+    recursive: true,
+  });
+  fs.copyFileSync(
+    join(
+      "node_modules",
+      "@netlify",
+      "plugin-emails",
+      "lib",
+      "handler",
+      "index.js"
+    ),
+    join(emailFunctionDirectory, "email.js")
   );
 };
