@@ -3,7 +3,7 @@ import fs from "fs";
 import Handlebars from "handlebars";
 import { ServerClient } from "postmark";
 
-export const getEmailFromPath = (path: string) => {
+export const getEmailFromPath = (path: string): string | undefined => {
   console.log(`Getting the template for: ${path}`);
 
   let fileContents: string | undefined = undefined;
@@ -17,7 +17,6 @@ export const getEmailFromPath = (path: string) => {
     if (filename === "index") {
       if (fileType === "html") {
         fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
-        console.log("Printing .html contents", fileContents);
       }
     }
   });
@@ -26,8 +25,26 @@ export const getEmailFromPath = (path: string) => {
 };
 
 const handler: Handler = async (event, _) => {
+  if (event.httpMethod !== "POST") {
+    return {
+      statusCode: 400,
+      body: "METHOD NOT ALLOWED",
+      headers: {
+        Allow: "POST",
+      },
+    };
+  }
+
+  if (!event.body) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Body required",
+      }),
+    };
+  }
+
   const emailPath = event.rawUrl.match(/email\/([A-z-]*)[\?]?/)?.[1];
-  const params = event.queryStringParameters;
   if (!emailPath) {
     return {
       statusCode: 400,
@@ -36,7 +53,10 @@ const handler: Handler = async (event, _) => {
       }),
     };
   }
-  if (!params?._from) {
+
+  const requestBody = JSON.parse(event.body);
+
+  if (!requestBody._from) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -44,7 +64,7 @@ const handler: Handler = async (event, _) => {
       }),
     };
   }
-  if (!params?._to) {
+  if (!requestBody._to) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -55,15 +75,15 @@ const handler: Handler = async (event, _) => {
   const fullEmailPath = `./emails/${emailPath}`;
   const fileContents = getEmailFromPath(fullEmailPath);
   const template = Handlebars.compile(fileContents);
-  const renderedTemplate = template(params);
+  const renderedTemplate = template(requestBody);
 
   const serverToken = process.env.EMAIL_API_TOKEN as string;
   const client = new ServerClient(serverToken);
 
   client.sendEmail({
-    From: params?._from,
-    To: params?._to,
-    Subject: params?._subject ?? "",
+    From: requestBody._from,
+    To: requestBody._to,
+    Subject: requestBody._subject ?? "",
     HtmlBody: renderedTemplate,
   });
 
