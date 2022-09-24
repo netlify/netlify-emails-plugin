@@ -2,6 +2,7 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import { ServerClient } from "postmark";
+import preDelivery from "./preDelivery";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   console.log(`Getting the template for: ${path}`);
@@ -24,7 +25,19 @@ export const getEmailFromPath = (path: string): string | undefined => {
   return fileContents;
 };
 
-const handler: Handler = async (event, _) => {
+const handler: Handler = async (event, context) => {
+  try {
+    preDelivery(event, context);
+  } catch (e) {
+    return {
+      statusCode: 400,
+      body: `Pre-delivery validation failed: ${(e as Error).message}`,
+      headers: {
+        Allow: "POST",
+      },
+    };
+  }
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 400,
