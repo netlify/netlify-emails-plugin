@@ -2,11 +2,10 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import { ServerClient } from "postmark";
+import CryptoJS from "crypto-js";
 import preDelivery from "./preDelivery";
 
 export const getEmailFromPath = (path: string): string | undefined => {
-  console.log(`Getting the template for: ${path}`);
-
   let fileContents: string | undefined = undefined;
   fs.readdirSync(path).forEach((file) => {
     if (fileContents !== undefined) {
@@ -67,7 +66,24 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  const requestBody = JSON.parse(event.body);
+  if (
+    process.env.NETLIFY_EMAILS_TOKEN === undefined &&
+    process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN === undefined
+  ) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Unable to decrypt body",
+      }),
+    };
+  }
+
+  const bytes = CryptoJS.AES.decrypt(
+    event.body,
+    process.env.NETLIFY_EMAILS_TOKEN ??
+      (process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN as string)
+  );
+  const requestBody = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
   if (!requestBody._from) {
     return {
@@ -81,7 +97,7 @@ const handler: Handler = async (event, context) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "Too address is required",
+        message: "To address is required",
       }),
     };
   }
