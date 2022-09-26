@@ -26,7 +26,7 @@ export const getEmailFromPath = (path: string): string | undefined => {
 
 const handler: Handler = async (event, context) => {
   try {
-    preDelivery(event, context);
+    preDelivery(Object.freeze(event), Object.freeze(context));
   } catch (e) {
     return {
       statusCode: 400,
@@ -36,6 +36,7 @@ const handler: Handler = async (event, context) => {
       },
     };
   }
+  console.log(event.httpMethod);
 
   if (event.httpMethod !== "POST") {
     return {
@@ -66,22 +67,18 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  if (
-    process.env.NETLIFY_EMAILS_TOKEN === undefined &&
-    process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN === undefined
-  ) {
+  if (process.env.NETLIFY_EMAILS_TOKEN === undefined) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: "Unable to decrypt body",
+        message: "Unable to decrypt body - No token set during build process",
       }),
     };
   }
 
   const bytes = CryptoJS.AES.decrypt(
     event.body,
-    process.env.NETLIFY_EMAILS_TOKEN ??
-      (process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN as string)
+    process.env.NETLIFY_EMAILS_TOKEN
   );
   const requestBody = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 

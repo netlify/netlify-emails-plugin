@@ -6,17 +6,16 @@ const sendEmail = ({
   from,
   subject,
   parameters,
+  token,
 }: {
   template: string;
   to: string;
   from: string;
   subject: string;
   parameters: object;
+  token: string;
 }) => {
-  if (
-    process.env.NETLIFY_EMAILS_TOKEN ||
-    process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN === undefined
-  ) {
+  if (!token) {
     throw new Error("Emails token must be set");
   }
 
@@ -29,8 +28,7 @@ const sendEmail = ({
 
   const ciphertext = CryptoJS.AES.encrypt(
     JSON.stringify(emailRequestBody),
-    process.env.NETLIFY_EMAILS_TOKEN ??
-      process.env.NEXT_PUBLIC_NETLIFY_EMAILS_TOKEN
+    token
   ).toString();
 
   fetch(`./.netlify/functions/email/${template}`, {
