@@ -76,10 +76,19 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  const bytes = CryptoJS.AES.decrypt(
-    event.body,
-    process.env.NETLIFY_EMAILS_TOKEN
-  );
+  let bytes: CryptoJS.lib.WordArray;
+  try {
+    bytes = CryptoJS.AES.decrypt(event.body, process.env.NETLIFY_EMAILS_TOKEN);
+  } catch {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message:
+          "Failed to decrypt body. Check you are using the correct token",
+      }),
+    };
+  }
+
   const requestBody = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
   if (!requestBody._from) {
