@@ -6,7 +6,6 @@ const sendEmail = ({
   from,
   subject,
   parameters,
-  token,
 }: {
   template: string;
   to: string;
@@ -15,10 +14,6 @@ const sendEmail = ({
   parameters: object;
   token: string;
 }) => {
-  if (!token) {
-    throw new Error("Emails token must be set");
-  }
-
   const emailRequestBody = {
     _to: to,
     _from: from,
@@ -28,7 +23,7 @@ const sendEmail = ({
 
   const ciphertext = CryptoJS.AES.encrypt(
     JSON.stringify(emailRequestBody),
-    token
+    process.env.NETLIFY_EMAILS_TOKEN as string
   ).toString();
 
   fetch(`./.netlify/functions/email/${template}`, {

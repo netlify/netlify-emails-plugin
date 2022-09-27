@@ -1,4 +1,4 @@
-declare const sendEmail: ({ template, to, from, subject, parameters, token, }: {
+declare const sendEmail: ({ template, to, from, subject, parameters, }: {
     template: string;
     to: string;
     from: string;
