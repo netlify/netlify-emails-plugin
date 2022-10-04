@@ -2,8 +2,6 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import { ServerClient } from "postmark";
-import CryptoJS from "crypto-js";
-import preDelivery from "./preDelivery";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined = undefined;
@@ -25,18 +23,13 @@ export const getEmailFromPath = (path: string): string | undefined => {
 };
 
 const handler: Handler = async (event, context) => {
-  try {
-    preDelivery(Object.freeze(event), Object.freeze(context));
-  } catch (e) {
-    return {
-      statusCode: 400,
-      body: `Pre-delivery validation failed: ${(e as Error).message}`,
-      headers: {
-        Allow: "POST",
-      },
-    };
-  }
-  console.log(event.httpMethod);
+  const emailTemplatesDirectory =
+    process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE ?? "./emails";
+
+  console.log(
+    { emailTemplatesDirectory },
+    process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE
+  );
 
   if (event.httpMethod !== "POST") {
     return {
@@ -67,31 +60,21 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  if (process.env.NETLIFY_EMAILS_TOKEN === undefined) {
+  if (
+    process.env.NETLIFY_EMAILS_TOKEN === undefined ||
+    event.headers["netlify-email-token"] !== process.env.NETLIFY_EMAILS_TOKEN
+  ) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: "Unable to decrypt body - No token set during build process",
+        message: "Failed to process request",
       }),
     };
   }
 
-  let bytes: CryptoJS.lib.WordArray;
-  try {
-    bytes = CryptoJS.AES.decrypt(event.body, process.env.NETLIFY_EMAILS_TOKEN);
-  } catch {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({
-        message:
-          "Failed to decrypt body. Check you are using the correct token",
-      }),
-    };
-  }
+  const requestBody = JSON.parse(event.body);
 
-  const requestBody = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-  if (!requestBody._from) {
+  if (!requestBody.from) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -99,7 +82,7 @@ const handler: Handler = async (event, context) => {
       }),
     };
   }
-  if (!requestBody._to) {
+  if (!requestBody.to) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -107,25 +90,25 @@ const handler: Handler = async (event, context) => {
       }),
     };
   }
-  const fullEmailPath = `./emails/${emailPath}`;
+  const fullEmailPath = `${emailTemplatesDirectory}/${emailPath}`;
   const fileContents = getEmailFromPath(fullEmailPath);
   const template = Handlebars.compile(fileContents);
-  const renderedTemplate = template(requestBody);
+  const renderedTemplate = template(requestBody.parameters);
 
-  const serverToken = process.env.EMAIL_API_TOKEN as string;
+  const serverToken = process.env.NETLIFY_EMAIL_API_TOKEN as string;
   const client = new ServerClient(serverToken);
 
   client.sendEmail({
-    From: requestBody._from,
-    To: requestBody._to,
-    Subject: requestBody._subject ?? "",
+    From: requestBody.from,
+    To: requestBody.to,
+    Subject: requestBody.subject ?? "",
     HtmlBody: renderedTemplate,
   });
 
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: `Email sent using template: ./emails/${emailPath}`,
+      message: `Email sent using template: ${emailTemplatesDirectory}/${emailPath}`,
     }),
   };
 };
