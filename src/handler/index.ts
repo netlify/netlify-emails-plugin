@@ -7,7 +7,7 @@ export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined = undefined;
   fs.readdirSync(path).forEach((file) => {
     if (fileContents !== undefined) {
-      // Break after getting first file
+      // break after getting first file
       return;
     }
     const fileType = file.split(".").pop();
