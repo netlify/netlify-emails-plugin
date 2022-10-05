@@ -26,11 +26,6 @@ const handler: Handler = async (event, context) => {
   const emailTemplatesDirectory =
     process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE ?? "./emails";
 
-  console.log(
-    { emailTemplatesDirectory },
-    process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE
-  );
-
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 400,
