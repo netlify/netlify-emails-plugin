@@ -9,8 +9,11 @@
   ],
   "dependencies": {
     "@netlify/functions": "^1.2.0",
+    "@sendgrid/mail": "^7.7.0",
     "crypto-js": "^4.1.1",
+    "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
+    "mailgun.js": "^8.0.1",
     "postmark": "^3.0.14",
     "tslib": "^2.4.0"
   },
@@ -50,9 +53,6 @@
   },
   "postinstall": "husky install",
   "repository": "url - tbc",
-  "bugs": {
-    "url": "url/issues - tbc"
-  },
   "lint-staged": {
     "src/**/*.js": [
       "npm run test:staged"

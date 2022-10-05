@@ -2,6 +2,10 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import { ServerClient } from "postmark";
+import sendGrid from "@sendgrid/mail";
+import Mailgun from "mailgun.js";
+import formData from "form-data";
+import mailer from "../mailer";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined = undefined;
@@ -23,13 +27,16 @@ export const getEmailFromPath = (path: string): string | undefined => {
 };
 
 const handler: Handler = async (event, context) => {
+  console.log(`Email handler received email request from path ${event.rawUrl}`);
   const emailTemplatesDirectory =
     process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE ?? "./emails";
 
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 400,
-      body: "METHOD NOT ALLOWED",
+      body: JSON.stringify({
+        message: "Method not allowed",
+      }),
       headers: {
         Allow: "POST",
       },
@@ -45,16 +52,17 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  const emailPath = event.rawUrl.match(/email\/([A-z-]*)[\?]?/)?.[1];
+  const emailPath = event.rawUrl.match(/emails\/([A-z-]*)[\?]?/)?.[1];
   if (!emailPath) {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "No email path provided",
+        message: `No email path provided - email path received: ${event.rawUrl}`,
       }),
     };
   }
 
+  // TODO - if we depend on email provider API keys, do we even need this secret?
   if (
     process.env.NETLIFY_EMAILS_SECRET === undefined ||
     event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
@@ -90,14 +98,28 @@ const handler: Handler = async (event, context) => {
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
 
-  const serverToken = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY as string;
-  const client = new ServerClient(serverToken);
+  const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
 
-  client.sendEmail({
-    From: requestBody.from,
-    To: requestBody.to,
-    Subject: requestBody.subject ?? "",
-    HtmlBody: renderedTemplate,
+  if (providerApiKey === undefined) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "An API key must be set for your email provider",
+      }),
+    };
+  }
+
+  await mailer({
+    configuration: {
+      apiKey: providerApiKey,
+      mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
+    },
+    request: {
+      from: requestBody.from,
+      to: requestBody.to,
+      subject: requestBody.subject ?? "",
+      html: renderedTemplate,
+    },
   });
 
   return {
