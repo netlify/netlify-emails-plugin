@@ -1,6 +1,5 @@
-import { handler } from "./handler/import";
 import fs from "fs";
-import { join, parse } from "path";
+import { join } from "path";
 
 export const onPreBuild = () => {
   const emailFunctionDirectory = join(

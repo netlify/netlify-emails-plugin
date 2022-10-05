@@ -61,8 +61,8 @@ const handler: Handler = async (event, context) => {
   }
 
   if (
-    process.env.NETLIFY_EMAILS_TOKEN === undefined ||
-    event.headers["netlify-email-token"] !== process.env.NETLIFY_EMAILS_TOKEN
+    process.env.NETLIFY_EMAILS_SECRET === undefined ||
+    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
   ) {
     return {
       statusCode: 500,
@@ -95,7 +95,7 @@ const handler: Handler = async (event, context) => {
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
 
-  const serverToken = process.env.NETLIFY_EMAIL_API_TOKEN as string;
+  const serverToken = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY as string;
   const client = new ServerClient(serverToken);
 
   client.sendEmail({
