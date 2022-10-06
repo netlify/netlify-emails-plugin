@@ -26,4 +26,4 @@ jobs:
       - name: Run tests
         run: yarn test
       - name: Build the project
-        run: yarn tsc
+        run: yarn build
