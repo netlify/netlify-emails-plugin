@@ -1,11 +1,7 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
-import { ServerClient } from "postmark";
-import sendGrid from "@sendgrid/mail";
-import Mailgun from "mailgun.js";
-import formData from "form-data";
-import mailer from "../mailer";
+import mailer from "./mailer";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined = undefined;
@@ -109,8 +105,20 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  await mailer({
+  const providerName = process.env.NETLIFY_EMAILS_PROVIDER;
+
+  if (providerName === undefined) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "An email API provider name must be set",
+      }),
+    };
+  }
+
+  const response = await mailer({
     configuration: {
+      providerName,
       apiKey: providerApiKey,
       mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
     },
@@ -122,12 +130,7 @@ const handler: Handler = async (event, context) => {
     },
   });
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: `Email sent using template: ${emailTemplatesDirectory}/${emailPath}`,
-    }),
-  };
+  return response;
 };
 
 export { handler };

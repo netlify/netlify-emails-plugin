@@ -3,7 +3,7 @@ import sendGrid from "@sendgrid/mail";
 import Mailgun from "mailgun.js";
 import formData from "form-data";
 
-interface IEmailRequest {
+export interface IEmailRequest {
   from: string;
   to: string;
   subject: string;
@@ -12,6 +12,7 @@ interface IEmailRequest {
 
 interface IEmailConfig {
   apiKey: string;
+  providerName: string;
   mailgunDomain?: string;
 }
 
@@ -23,16 +24,9 @@ interface IMailerProps {
 const mailer = async ({
   configuration,
   request,
-}: IMailerProps): Promise<{ status: number; body: string }> => {
+}: IMailerProps): Promise<{ statusCode: number; body: string }> => {
   const acceptedProviders = ["mailgun", "postmark", "sendgrid"];
-  const emailProvider = process.env.NETLIFY_EMAILS_PROVIDER?.toLowerCase();
-
-  if (emailProvider === undefined) {
-    return {
-      status: 400,
-      body: JSON.stringify("No email provider specified"),
-    };
-  }
+  const emailProvider = configuration.providerName.toLowerCase();
 
   if (
     acceptedProviders.find(
@@ -40,18 +34,18 @@ const mailer = async ({
     ) === undefined
   ) {
     return {
-      status: 404,
+      statusCode: 404,
       body: JSON.stringify(
         `No supported email provider located for: ${emailProvider}`
       ),
     };
   } else {
-    // TODO - Catch and manage errors from each handler and return the error message, with a 500 code
+    let errorMessage: string | undefined = undefined;
     if (emailProvider === "mailgun") {
       console.log("Sending email using Mailgun...");
       if (configuration.mailgunDomain === undefined) {
         return {
-          status: 400,
+          statusCode: 400,
           body: JSON.stringify(
             "Domain should be specified when using Mailgun email API"
           ),
@@ -75,36 +69,62 @@ const mailer = async ({
             html: request.html,
           }
         );
-        console.log(result.status, "status");
+        if (result.status !== 200) {
+          errorMessage = `${result.status} - ${result.message}`;
+        }
       } catch (e) {
-        console.log(JSON.stringify(e));
+        const error = e as { status: number; message: string };
+        errorMessage = `${error.status} - ${error.message}`;
       }
     }
     if (emailProvider === "postmark") {
       console.log("Sending email using Postmark...");
       const client = new ServerClient(configuration.apiKey);
 
-      client.sendEmail({
-        From: request.from,
-        To: request.to,
-        Subject: request.subject,
-        HtmlBody: request.html,
-      });
+      try {
+        const result = await client.sendEmail({
+          From: request.from,
+          To: request.to,
+          Subject: request.subject,
+          HtmlBody: request.html,
+        });
+
+        if (result.ErrorCode !== 0) {
+          errorMessage = result.Message;
+        }
+      } catch (e) {
+        const error = e as { statusCode: string; code: string };
+        errorMessage = `${error.code} - Failed with status code: ${error.statusCode}`;
+      }
     }
     if (emailProvider === "sendgrid") {
       console.log("Sending email using Sendgrid...");
       sendGrid.setApiKey(configuration.apiKey);
 
-      const result = await sendGrid.send({
-        from: request.from,
-        to: request.to,
-        subject: request.subject,
-        html: request.html,
-      });
+      try {
+        await sendGrid.send({
+          from: request.from,
+          to: request.to,
+          subject: request.subject,
+          html: request.html,
+        });
+      } catch (e) {
+        const error = e as { code: number; message: string };
+        errorMessage = `${error.code} - ${error.message}`;
+      }
+    }
+
+    if (errorMessage) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify(
+          `The email API provider ${emailProvider} failed to process the request: ${errorMessage}`
+        ),
+      };
     }
     return {
-      status: 200,
-      body: JSON.stringify("Email sent"),
+      statusCode: 200,
+      body: JSON.stringify(`Email successfully sent with ${emailProvider}`),
     };
   }
 };
