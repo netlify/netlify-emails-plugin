@@ -20,4 +20,11 @@ export const onPreBuild = () => {
     join(pluginNodeModuleDirectory, "handler", "index.ts"),
     join(emailFunctionDirectory, "index.ts")
   );
+  fs.mkdirSync(join(emailFunctionDirectory, "mailer"), {
+    recursive: true,
+  });
+  fs.copyFileSync(
+    join(pluginNodeModuleDirectory, "handler", "mailer", "index.ts"),
+    join(emailFunctionDirectory, "mailer", "index.ts")
+  );
 };
