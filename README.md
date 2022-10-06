@@ -15,7 +15,7 @@ Or via the Netlify app.
 
 ## Configuration
 
-Whether you have enabled the plugin via the Netlify app or via the `netlify.toml`, the following environment variables are available:
+The following environment variables are required in order for the emails function to handle requests:
 
 | Variable Name                     | Description                                                 | Required |
 | --------------------------------- | ----------------------------------------------------------- | -------- |
