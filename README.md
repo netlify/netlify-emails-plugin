@@ -1,39 +1,25 @@
-# Instructions for using this package during the hackathon
+# Netlify Emails Plugin
 
-## Disclaimer
+The Netlify emails build plugin which is responsible for creating a serverless function to handle email requests, populating them with the provided templates and sending them using the specified email API provider.
 
-In its current form, this project is very much in the development phase and is only currently built to be used locally to help build an initial proof of concept. As we tidy up the rough edges of this project, the intention is to make this package a little more polished and closer to a releasable state.
+## Enabling the plugin
 
-## Linking & installing the package locally
+Either add it to the `netlify.toml` as follows:
 
-- Clone this repository locally
-- Run `yarn build`
-- Navigate to your own netlify application (suggest a hobby project)
-- Add the plugin to the `netlify.toml` of your hobby project, specificying the local path:
-  ```
-  [[plugins]]
-      package = "../folder-name-you-gave-the-plugin-project"
-  ```
-- Add this to the `package.json` of your hobby project:
-  ```
-    "dependencies": {
-       "@netlify/plugin-emails": "file:../folder-name-you-gave-the-plugin-project",
-  ```
-- Run `yarn` on your hobby project
-- Run `netlify build` on your hobby project and the build plugin should be triggered
+```
+[[plugins]]
+  package = "@netlify/emails-plugin"
+```
 
-## How to use the plugin?
+Or via the Netlify app.
 
-- Add the following file with some basic html to your hobby project `./emails/welcome/index.html`
-- Run `netlify build`
-- Run `netlify dev`
-- Visit your site locally and append `/.netlify/functions/email/welcome` to the address
-- This will trigger the email function and you should see logs printing the html content
+## Configuration
 
-## Making changes to the package and testing locally
+Whether you have enabled the plugin via the Netlify app or via the `netlify.toml`, the following environment variables are available:
 
-Currently the best way to test your changes locally is as follows:
-
-- Make a change to some of the code in this project
-- Run `yarn build` once you have finished making the changes
-- Go to the project using the plugin and run `netlify build` and the project will use the updated version of the plugin
+| Variable Name                     | Description                                                 | Required |
+| --------------------------------- | ----------------------------------------------------------- | -------- |
+| `NETLIFY_EMAILS_PROVIDER`         | "mailgun" \| "sendgrid" \| "postmark"                       | Yes      |
+| `NETLIFY_EMAILS_SECRET`           | The unique secret used to authenticate a request is genuine | Yes      |
+| `NETLIFY_EMAILS_PROVIDER_API_KEY` | The API key issued by the email provider                    | Yes      |
+| `NETLIFY_EMAILS_MAILGUN_DOMAIN`   | If the provider is set to Mailgun, the domain must be set   | No       |
