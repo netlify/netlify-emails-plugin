@@ -53,7 +53,7 @@ describe("Mailer function", () => {
       });
     });
 
-    it("should  return 500 with message if sendgrid throws error", async () => {
+    it("should return 500 with message if sendgrid throws error", async () => {
       mockSendgridSend = () => {
         throw { code: 403, message: "some error message" };
       };
