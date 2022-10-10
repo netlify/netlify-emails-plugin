@@ -58,15 +58,14 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  // TODO - if we depend on email provider API keys, do we even need this secret?
   if (
     process.env.NETLIFY_EMAILS_SECRET === undefined ||
     event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
   ) {
     return {
-      statusCode: 500,
+      statusCode: 403,
       body: JSON.stringify({
-        message: "Failed to process request",
+        message: "Request forbidden",
       }),
     };
   }
