@@ -24,8 +24,6 @@ interface IMailerProps {
 const mailer = async ({
   configuration,
   request,
-  testLint,
-  test2,
 }: IMailerProps): Promise<{ statusCode: number; body: string }> => {
   const acceptedProviders = ["mailgun", "postmark", "sendgrid"];
   const emailProvider = configuration.providerName.toLowerCase();
