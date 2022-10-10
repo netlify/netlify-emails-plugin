@@ -1,16 +1,15 @@
 {
   "name": "@netlify/plugin-emails",
-  "version": "1.0.0",
-  "description": "Scans the /email directory and sends email templates to the email service",
+  "version": "0.0.1",
+  "description": "A build plugin that creates an email handler and processes requests to send emails",
   "main": "./lib/index.js",
   "files": [
-    "lib/**/*",
+    "src/**/*",
     "manifest.yml"
   ],
   "dependencies": {
     "@netlify/functions": "^1.2.0",
     "@sendgrid/mail": "^7.7.0",
-    "crypto-js": "^4.1.1",
     "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
     "mailgun.js": "^8.0.1",
@@ -19,7 +18,6 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "watch": "tsc --watch --project tsconfig.build.json",
     "test": "jest",
     "prepare": "husky install"
   },
@@ -55,7 +53,6 @@
     "typescript": "^4.7.3"
   },
   "postinstall": "husky install",
-  "repository": "url - tbc",
   "lint-staged": {
     "src/**/*.js": [
       "npm run test:staged"

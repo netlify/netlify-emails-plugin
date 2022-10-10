@@ -73,7 +73,7 @@ const handler: Handler = async (event, context) => {
 
   const requestBody = JSON.parse(event.body);
 
-  if (!requestBody.from) {
+  if (!requestBody._from) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -81,7 +81,7 @@ const handler: Handler = async (event, context) => {
       }),
     };
   }
-  if (!requestBody.to) {
+  if (!requestBody._to) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -123,9 +123,9 @@ const handler: Handler = async (event, context) => {
       mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
     },
     request: {
-      from: requestBody.from,
-      to: requestBody.to,
-      subject: requestBody.subject ?? "",
+      from: requestBody._from,
+      to: requestBody._to,
+      subject: requestBody._subject ?? "",
       html: renderedTemplate,
     },
   });
