@@ -1,9 +1,7 @@
 import mailer, { IEmailRequest } from ".";
 
-let mockPostmarkSendEmail: (() => { ErrorCode: number }) | undefined =
-  undefined;
-let mockMailgunCreate: (() => { status: number; message: string }) | undefined =
-  undefined;
+let mockPostmarkSendEmail: (() => { ErrorCode: number }) | undefined;
+let mockMailgunCreate: (() => { status: number; message: string }) | undefined;
 let mockSendgridSend: () => void = jest.fn();
 
 jest.mock("postmark", () => ({
@@ -55,7 +53,8 @@ describe("Mailer function", () => {
 
     it("should return 500 with message if sendgrid throws error", async () => {
       mockSendgridSend = () => {
-        throw { code: 403, message: "some error message" };
+        const error = { code: 403, message: "some error message" };
+        throw error as unknown as Error;
       };
       const result = await mailer({
         configuration: {
@@ -109,7 +108,8 @@ describe("Mailer function", () => {
 
     it("should return 500 with message if mailgun throws error", async () => {
       mockMailgunCreate = () => {
-        throw { status: 403, message: "some error message" };
+        const error = { status: 403, message: "some error message" };
+        throw error as unknown as Error;
       };
       const result = await mailer({
         configuration: {
@@ -164,7 +164,8 @@ describe("Mailer function", () => {
 
     it("should return 500 with message if postmark throws error", async () => {
       mockPostmarkSendEmail = () => {
-        throw { statusCode: "123", code: "403" };
+        const error = { statusCode: "123", code: "403" };
+        throw error as unknown as Error;
       };
       const result = await mailer({
         configuration: { apiKey: "someKey", providerName: "postmark" },

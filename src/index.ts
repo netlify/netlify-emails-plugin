@@ -1,7 +1,7 @@
 import fs from "fs";
 import { join } from "path";
 
-export const onPreBuild = () => {
+export const onPreBuild = (): void => {
   const emailFunctionDirectory = join(
     ".netlify",
     "functions-internal",
