@@ -40,7 +40,7 @@ const mailer = async ({
       ),
     };
   } else {
-    let errorMessage: string | undefined = undefined;
+    let errorMessage: string | undefined;
     if (emailProvider === "mailgun") {
       console.log("Sending email using Mailgun...");
       if (configuration.mailgunDomain === undefined) {
@@ -70,7 +70,7 @@ const mailer = async ({
           }
         );
         if (result.status !== 200) {
-          errorMessage = `${result.status} - ${result.message}`;
+          errorMessage = `${result.status} - ${result.message ?? ""}`;
         }
       } catch (e) {
         const error = e as { status: number; message: string };
@@ -114,7 +114,7 @@ const mailer = async ({
       }
     }
 
-    if (errorMessage) {
+    if (errorMessage !== undefined) {
       return {
         statusCode: 500,
         body: JSON.stringify(
