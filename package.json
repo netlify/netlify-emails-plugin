@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint-staged": "eslint --cache --max-warnings 0"
   },
   "keywords": [
     "emails",
@@ -54,12 +55,6 @@
   },
   "postinstall": "husky install",
   "lint-staged": {
-    "src/**/*.js": [
-      "npm run test:staged"
-    ],
-    "*.js": [
-      "eslint --cache --fix",
-      "prettier --write"
-    ]
+    "*.{js,jsx,ts,tsx}": "yarn lint-staged --fix"
   }
 }
