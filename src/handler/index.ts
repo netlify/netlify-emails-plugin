@@ -25,7 +25,7 @@ export const getEmailFromPath = (path: string): string | undefined => {
 const handler: Handler = async (event, context) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
   const emailTemplatesDirectory =
-    process.env.NETLIFY_EMAILS_DIRECTORY_OVERRIDE ?? "./emails";
+    process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
   if (event.httpMethod !== "POST") {
     return {
@@ -72,7 +72,7 @@ const handler: Handler = async (event, context) => {
 
   const requestBody = JSON.parse(event.body);
 
-  if (requestBody._from !== undefined) {
+  if (requestBody.from !== undefined) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -80,7 +80,7 @@ const handler: Handler = async (event, context) => {
       }),
     };
   }
-  if (requestBody._to !== undefined) {
+  if (requestBody.to !== undefined) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -122,9 +122,9 @@ const handler: Handler = async (event, context) => {
       mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
     },
     request: {
-      from: requestBody._from,
-      to: requestBody._to,
-      subject: requestBody._subject ?? "",
+      from: requestBody.from,
+      to: requestBody.to,
+      subject: requestBody.subject ?? "",
       html: renderedTemplate,
     },
   });
