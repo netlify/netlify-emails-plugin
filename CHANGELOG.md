@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1-devpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1...v0.0.1-devpreview) (2022-10-13)
+
+
+### Features
+
+* event body validation ([99529cf](https://github.com/netlify/netlify-emails-plugin/commit/99529cf6f0ad58c2b0ac47a5dd70500a9c5416eb))
+* install deps before publishing ([4290a4a](https://github.com/netlify/netlify-emails-plugin/commit/4290a4a2df98d1e816dbea7e3ecfbe84aedb06e2))
+
 ## [0.0.1](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1...v0.0.1) (2022-10-13)
 
 
