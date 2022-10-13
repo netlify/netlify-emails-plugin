@@ -28,15 +28,6 @@ const handler: Handler = async (event, context) => {
   const emailTemplatesDirectory =
     process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
-  if (event.body === null) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "Body required",
-      }),
-    };
-  }
-
   const emailPath = event.rawUrl.match(/emails\/([A-z-]*)[?]?/)?.[1];
   if (emailPath === undefined) {
     return {
@@ -66,6 +57,15 @@ const handler: Handler = async (event, context) => {
     }
 
     return emailDirectoryHandler(emailTemplatesDirectory);
+  }
+
+  if (event.body === null) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Body required",
+      }),
+    };
   }
 
   if (
