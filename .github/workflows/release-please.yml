@@ -28,7 +28,15 @@ jobs:
           check-latest: true
           registry-url: "https://registry.npmjs.org"
         if: ${{ steps.release.outputs.release_created }}
-      - run: npm install && npm publish
+      - run: yarn install
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: yarn build
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - run: npm publish
         if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
