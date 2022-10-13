@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-uselib](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-mainpreview...v0.0.1-uselib) (2022-10-13)
+
+
+### Bug Fixes
+
+* use lib files for functions ([474a298](https://github.com/netlify/netlify-emails-plugin/commit/474a2988dc27ea3ff865553d1fc3cad3d385fcee))
+
 ## [0.0.1-mainpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-buildpreview...v0.0.1-mainpreview) (2022-10-13)
 
 
