@@ -2,10 +2,9 @@
   "name": "@netlify/plugin-emails",
   "version": "0.0.1-buildpreview",
   "description": "A build plugin that creates an email handler and processes requests to send emails",
-  "main": "./src/lib/index.js",
+  "main": "./lib/index.js",
   "files": [
-    "src/**/*",
-    "manifest.yml"
+    "lib/**/*"
   ],
   "types": "index.d.ts",
   "dependencies": {
