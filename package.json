@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
+    "watch": "tsc --project tsconfig.build.json --watch",
     "test": "jest",
     "prepare": "husky install"
   },

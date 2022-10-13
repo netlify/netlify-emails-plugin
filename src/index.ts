@@ -8,24 +8,27 @@ export const onPreBuild = (): void => {
     "emails"
   );
   const pluginNodeModuleDirectory = join(
+    ".netlify",
+    "plugins",
     "node_modules",
     "@netlify",
     "plugin-emails",
-    "src"
+    "lib"
   );
+
   fs.mkdirSync(emailFunctionDirectory, {
     recursive: true,
   });
   fs.copyFileSync(
-    join(pluginNodeModuleDirectory, "handler", "index.ts"),
-    join(emailFunctionDirectory, "index.ts")
+    join(pluginNodeModuleDirectory, "handler", "index.js"),
+    join(emailFunctionDirectory, "index.js")
   );
   fs.mkdirSync(join(emailFunctionDirectory, "mailer"), {
     recursive: true,
   });
   fs.copyFileSync(
-    join(pluginNodeModuleDirectory, "handler", "mailer", "index.ts"),
-    join(emailFunctionDirectory, "mailer", "index.ts")
+    join(pluginNodeModuleDirectory, "handler", "mailer", "index.js"),
+    join(emailFunctionDirectory, "mailer", "index.js")
   );
   fs.mkdirSync(join(emailFunctionDirectory, "preview"), {
     recursive: true,
@@ -34,8 +37,8 @@ export const onPreBuild = (): void => {
     recursive: true,
   });
   fs.copyFileSync(
-    join(pluginNodeModuleDirectory, "handler", "preview", "index.ts"),
-    join(emailFunctionDirectory, "preview", "index.ts")
+    join(pluginNodeModuleDirectory, "handler", "preview", "index.js"),
+    join(emailFunctionDirectory, "preview", "index.js")
   );
   fs.copyFileSync(
     join(pluginNodeModuleDirectory, "handler", "preview", "preview.html"),
@@ -46,7 +49,7 @@ export const onPreBuild = (): void => {
     join(emailFunctionDirectory, "preview", "directory.html")
   );
   fs.copyFileSync(
-    join(pluginNodeModuleDirectory, "handler", "utils", "handlebars.ts"),
-    join(emailFunctionDirectory, "utils", "handlebars.ts")
+    join(pluginNodeModuleDirectory, "handler", "utils", "handlebars.js"),
+    join(emailFunctionDirectory, "utils", "handlebars.js")
   );
 };
