@@ -2,7 +2,7 @@
   "name": "@netlify/plugin-emails",
   "version": "0.0.1",
   "description": "A build plugin that creates an email handler and processes requests to send emails",
-  "main": "./lib/index.js",
+  "main": "./src/index.ts",
   "files": [
     "src/**/*",
     "manifest.yml"
@@ -10,10 +10,13 @@
   "dependencies": {
     "@netlify/functions": "^1.2.0",
     "@sendgrid/mail": "^7.7.0",
+    "cheerio": "^1.0.0-rc.12",
     "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
+    "lodash": "^4.17.21",
     "mailgun.js": "^8.0.1",
     "node-fetch": "^3.2.10",
+    "path": "^0.12.7",
     "postmark": "^3.0.14",
     "tslib": "^2.4.0"
   },
@@ -40,8 +43,8 @@
     "@babel/preset-env": "^7.19.3",
     "@netlify/build": "^27.1.4",
     "@netlify/eslint-config-node": "^6.0.0",
-    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.1.1",
+    "@types/lodash": "^4.14.186",
     "@types/node": "^18.7.14",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "babel-jest": "^29.1.2",

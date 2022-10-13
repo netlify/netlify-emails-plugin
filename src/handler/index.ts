@@ -2,6 +2,7 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import mailer from "./mailer";
+import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined;
@@ -27,18 +28,6 @@ const handler: Handler = async (event, context) => {
   const emailTemplatesDirectory =
     process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "Method not allowed",
-      }),
-      headers: {
-        Allow: "POST",
-      },
-    };
-  }
-
   if (event.body === null) {
     return {
       statusCode: 400,
@@ -56,6 +45,27 @@ const handler: Handler = async (event, context) => {
         message: `No email path provided - email path received: ${event.rawUrl}`,
       }),
     };
+  }
+
+  const allowedPreviewEnvs = ["deploy-preview", "branch-deploy", "dev"];
+  const showEmailPreview = allowedPreviewEnvs.includes(
+    process.env.CONTEXT as string
+  );
+
+  if (emailPath === "_preview" && showEmailPreview) {
+    const previewPath = event.rawUrl.match(
+      /emails\/_preview\/([A-z-]*)[?]?/
+    )?.[1];
+
+    if (previewPath !== undefined) {
+      return emailPreviewHandler(
+        previewPath,
+        emailTemplatesDirectory,
+        event.queryStringParameters
+      );
+    }
+
+    return emailDirectoryHandler(emailTemplatesDirectory);
   }
 
   if (
