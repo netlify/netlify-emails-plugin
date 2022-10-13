@@ -27,7 +27,8 @@
   },
   "keywords": [
     "emails",
-    "netlify-plugin"
+    "netlify-plugin",
+    "email"
   ],
   "author": "Lewis Thorley",
   "contributors": [
