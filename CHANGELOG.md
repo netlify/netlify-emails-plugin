@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-buildpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-buildpreview...v0.0.1-buildpreview) (2022-10-13)
+
+
+### Bug Fixes
+
+* main-entry-fix ([f2a7ef1](https://github.com/netlify/netlify-emails-plugin/commit/f2a7ef105a6ea70766c8ae0073032ef3aebedfed))
+
 ## [0.0.1-buildpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-devpreview...v0.0.1-buildpreview) (2022-10-13)
 
 
