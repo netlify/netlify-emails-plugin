@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.1-buildpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-devpreview...v0.0.1-buildpreview) (2022-10-13)
+
+
+### Features
+
+* build to publish ([64fa87d](https://github.com/netlify/netlify-emails-plugin/commit/64fa87d3d6e08c5082f13e60a2aef70f3e756b69))
+
 ## [0.0.1-devpreview](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1...v0.0.1-devpreview) (2022-10-13)
 
 
