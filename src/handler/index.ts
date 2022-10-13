@@ -47,8 +47,8 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  const allowedPreviewEnvs = ["deploy-preview", "branch-deploy", "dev"];
-  const showEmailPreview = allowedPreviewEnvs.includes(
+  const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
+  const showEmailPreview = allowedPreviewEnvironments.includes(
     process.env.CONTEXT as string
   );
 
