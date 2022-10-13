@@ -1,5 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/mailer/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "node_modules"]
 }
