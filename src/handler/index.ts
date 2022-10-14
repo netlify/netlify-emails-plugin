@@ -82,7 +82,7 @@ const handler: Handler = async (event, context) => {
 
   const requestBody = JSON.parse(event.body);
 
-  if (requestBody.from !== undefined) {
+  if (requestBody.from === undefined) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -90,7 +90,7 @@ const handler: Handler = async (event, context) => {
       }),
     };
   }
-  if (requestBody.to !== undefined) {
+  if (requestBody.to === undefined) {
     return {
       statusCode: 400,
       body: JSON.stringify({

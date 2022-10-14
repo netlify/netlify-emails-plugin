@@ -43,11 +43,13 @@ curl -X POST \
   --header 'netlify-emails-secret: NETLIFY_EMAILS_SECRET' \
   --header 'Content-Type: application/json' \
   --data-raw '{
-  "_from": "no-reply@yourdomain.com",
-  "_to": "alexanderhamilton@test.com",
-  "_subject": "Welcome",
-  "products": ["product1", "product2", "product3"]
-  "name": "Alexander",
+  "from": "no-reply@yourdomain.com",
+  "to": "alexanderhamilton@test.com",
+  "subject": "Welcome",
+  "parameters": {
+    "products": ["product1", "product2", "product3"]
+    "name": "Alexander",
+  }
 }'
 ```
 
@@ -59,10 +61,18 @@ curl -X POST \
   --header 'netlify-emails-secret: NETLIFY_EMAILS_SECRET' \
   --header 'Content-Type: application/json' \
   --data-raw '{
-  "_from": "no-reply@yourdomain.com",
-  "_to": "alexanderhamilton@test.com",
-  "_subject": "Welcome",
-  "products": ["product1", "product2", "product3"]
-  "name": "Alexander",
+  "from": "no-reply@yourdomain.com",
+  "to": "alexanderhamilton@test.com",
+  "subject": "Welcome",
+  "parameters": {
+    "products": ["product1", "product2", "product3"]
+    "name": "Alexander",
+  }
 }'
 ```
+
+## Step 5: Previewing emails locally
+
+Visit `http://localhost:{PORT}/.netlify/functions/emails/_preview` to preview your email templates.
+
+Please note, this preview endpoint is not made available in production and is only made available locally or when viewing a deploy preview.
