@@ -18,9 +18,7 @@ export const onPreBuild = ({
   ];
 
   console.log("Installing email function dependencies");
-  functionDependencies.forEach((dependency) =>
-    exec(`npm install ${dependency}`)
-  );
+  exec(`npm install ${functionDependencies.join(" ")} -D`);
   console.log("Installed email function dependencies");
 
   const emailFunctionDirectory = join(
