@@ -1,7 +1,13 @@
 import fs from "fs";
 import { join } from "path";
 
-export const onPreBuild = (): void => {
+export const onPreBuild = ({
+  netlifyConfig,
+}: {
+  netlifyConfig: { functions: { [key: string]: { node_bundler: string } } };
+}): void => {
+  // eslint-disable-next-line @typescript-eslint/dot-notation
+  netlifyConfig.functions["emails"].node_bundler = "nft";
   const emailFunctionDirectory = join(
     ".netlify",
     "functions-internal",
