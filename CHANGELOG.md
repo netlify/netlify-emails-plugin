@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-uselib...v0.0.2) (2022-10-14)
+
+
+### Bug Fixes
+
+* add html to lib output and include manifest ([9b80c19](https://github.com/netlify/netlify-emails-plugin/commit/9b80c19a1c377aea8a88c17d230942560ff146c9))
+
 ## [0.0.1-uselib](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-mainpreview...v0.0.1-uselib) (2022-10-13)
 
 
