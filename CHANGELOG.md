@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.3...v0.0.4) (2022-10-14)
+
+
+### Bug Fixes
+
+* bundler change ([deda279](https://github.com/netlify/netlify-emails-plugin/commit/deda2791549fb6f23b39dc03030ff09eb66b434f))
+
 ## [0.0.3](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.2...v0.0.3) (2022-10-14)
 
 
