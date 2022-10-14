@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.4...v0.0.6) (2022-10-14)
+
+
+### Bug Fixes
+
+* install function dependencies in one command as devdep ([739e26e](https://github.com/netlify/netlify-emails-plugin/commit/739e26e049076ad5fb3b0fcd34e12749f14c3736))
+* install function dependencies on preBuild ([69baf10](https://github.com/netlify/netlify-emails-plugin/commit/69baf10d7d8adc49347354b41425a8bc7d551c9d))
+
 ## [0.0.4](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.3...v0.0.4) (2022-10-14)
 
 
