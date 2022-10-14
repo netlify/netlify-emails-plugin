@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.2...v0.0.3) (2022-10-14)
+
+
+### Bug Fixes
+
+* request validation fixed and readme updated ([e396b30](https://github.com/netlify/netlify-emails-plugin/commit/e396b30e1d083b6d263474ff7dc132ecf739b6af))
+
 ## [0.0.2](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.1-uselib...v0.0.2) (2022-10-14)
 
 
