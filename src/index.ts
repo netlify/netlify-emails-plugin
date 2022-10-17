@@ -26,14 +26,17 @@ export const onPreBuild = ({
     "functions-internal",
     "emails"
   );
-  const pluginNodeModuleDirectory = join(
-    ".netlify",
-    "plugins",
+
+  const pluginLibDirectory = join(
     "node_modules",
     "@netlify",
     "plugin-emails",
     "lib"
   );
+  const rootModuleExists = fs.existsSync(pluginLibDirectory);
+  const pluginNodeModuleDirectory = rootModuleExists
+    ? pluginLibDirectory
+    : join(".netlify", "plugins", pluginLibDirectory);
 
   fs.mkdirSync(emailFunctionDirectory, {
     recursive: true,
