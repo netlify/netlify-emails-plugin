@@ -13,7 +13,6 @@ export const onPreBuild = ({
     "@sendgrid/mail",
     "form-data",
     "mailgun.js",
-    "lodash",
     "cheerio",
   ];
 
