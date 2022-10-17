@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.6...v0.0.7) (2022-10-17)
+
+
+### Bug Fixes
+
+* Directory issue ([0834d46](https://github.com/netlify/netlify-emails-plugin/commit/0834d46f9013f5b447ea60e2b138a0f791e2fae4))
+
 ## [0.0.6](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.4...v0.0.6) (2022-10-14)
 
 
