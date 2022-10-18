@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.7...v0.1.0) (2022-10-18)
+
+
+### Features
+
+* error handling added for directories not being present and improved readme ([a4f578b](https://github.com/netlify/netlify-emails-plugin/commit/a4f578beac0c96048b40da5ad879412bc661881f))
+
 ## [0.0.7](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.6...v0.0.7) (2022-10-17)
 
 
