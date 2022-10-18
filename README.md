@@ -13,7 +13,7 @@ Either add it to the `netlify.toml` as follows:
   package = "@netlify/emails-plugin"
 ```
 
-Or via the Netlify app.
+Or via the Netlify app under Site Settings.
 
 ## Step 2: Configuration
 
