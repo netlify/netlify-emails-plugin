@@ -36,7 +36,7 @@ const handler: Handler = async (event, context) => {
     shell: true,
   });
 
-  !allowedPreviewEnvironments.includes(process.env.CONTEXT as string) &&
+  process.env.NODE_ENV !== "test" &&
     command.stdout.on("data", (data) => console.log(data.toString()));
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
