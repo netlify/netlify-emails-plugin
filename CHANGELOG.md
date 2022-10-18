@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.9](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.8...v0.0.9) (2022-10-18)
+
+
+### Bug Fixes
+
+* log-dir ([3ae8813](https://github.com/netlify/netlify-emails-plugin/commit/3ae881316b1ff89040c792a5a8261983e5b88f64))
+
 ## [0.0.8](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.7...v0.0.8) (2022-10-18)
 
 
