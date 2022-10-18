@@ -54,6 +54,8 @@ describe("Email handler", () => {
     jest.resetModules(); // Most important - it clears the cache
     process.env = { ...OLD_ENV }; // Make a copy
     mockSendgridSend.mockClear();
+    mockPostmarkSendEmail.mockClear();
+    mockMailgunCreate.mockClear();
   });
 
   afterAll(() => {
@@ -231,65 +233,117 @@ describe("Email handler", () => {
     });
   });
 
-  it("should render preview directory with available templates", async () => {
-    const secret = "super-secret";
-    process.env.NETLIFY_EMAILS_SECRET = secret;
-    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
-    process.env.CONTEXT = "dev";
+  describe("when calling the preview tool", () => {
+    it("should render preview directory with available templates", async () => {
+      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+      process.env.CONTEXT = "dev";
 
-    const response = (await handler(
-      {
-        headers: { "netlify-emails-secret": secret },
-        rawUrl: "http://localhost:8888/.netlify/functions/emails/_preview",
-        httpMethod: "GET",
-      } as unknown as Event,
-      {} as unknown as Context
-    )) as Response;
+      const response = (await handler(
+        {
+          rawUrl: "http://localhost:8888/.netlify/functions/emails/_preview",
+          httpMethod: "GET",
+        } as unknown as Event,
+        {} as unknown as Context
+      )) as Response;
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toContain("Available templates");
-    expect(response.body).toContain("confirm");
-  });
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("Available templates");
+      expect(response.body).toContain("confirm");
+    });
 
-  it("should render preview for email with available templates and parameters", async () => {
-    const secret = "super-secret";
-    process.env.NETLIFY_EMAILS_SECRET = secret;
-    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
-    process.env.CONTEXT = "dev";
+    it("should render preview for email with available templates and parameters", async () => {
+      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+      process.env.CONTEXT = "dev";
 
-    const response = (await handler(
-      {
-        headers: { "netlify-emails-secret": secret },
-        rawUrl:
-          "http://localhost:8888/.netlify/functions/emails/_preview/confirm",
-        httpMethod: "GET",
-      } as unknown as Event,
-      {} as unknown as Context
-    )) as Response;
+      const response = (await handler(
+        {
+          rawUrl:
+            "http://localhost:8888/.netlify/functions/emails/_preview/confirm",
+          httpMethod: "GET",
+        } as unknown as Event,
+        {} as unknown as Context
+      )) as Response;
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toContain("This is the confirm email");
-    expect(response.body).toContain("Parameters");
-    expect(response.body).toContain('<input id="name"');
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toContain("This is the confirm email");
+      expect(response.body).toContain("Parameters");
+      expect(response.body).toContain('<input id="name"');
+    });
+
+    it("should reject template preview when email directory does not exist", async () => {
+      process.env.NETLIFY_EMAILS_DIRECTORY = "./some/phantom/directory";
+      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+      process.env.CONTEXT = "dev";
+
+      const response = await handler(
+        {
+          rawUrl:
+            "http://localhost:8888/.netlify/functions/emails/_preview/confirm",
+          httpMethod: "GET",
+        } as unknown as Event,
+        {} as unknown as Context
+      );
+
+      expect(response).toEqual({
+        statusCode: 400,
+        body: expect.stringContaining(
+          "Unable to read emails from email directory './some/phantom/directory'."
+        ),
+      });
+    });
+
+    it("should reject directory preview when email directory does not exist", async () => {
+      process.env.NETLIFY_EMAILS_DIRECTORY = "./some/phantom/directory";
+      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+      process.env.CONTEXT = "dev";
+
+      const response = await handler(
+        {
+          rawUrl: "http://localhost:8888/.netlify/functions/emails/_preview",
+          httpMethod: "GET",
+        } as unknown as Event,
+        {} as unknown as Context
+      );
+
+      expect(response).toEqual({
+        statusCode: 400,
+        body: expect.stringContaining(
+          "Unable to read emails from email directory './some/phantom/directory'."
+        ),
+      });
+    });
+
+    it("should reject template preview when template does not exist", async () => {
+      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+      process.env.CONTEXT = "dev";
+
+      const response = await handler(
+        {
+          rawUrl:
+            "http://localhost:8888/.netlify/functions/emails/_preview/not-here",
+          httpMethod: "GET",
+        } as unknown as Event,
+        {} as unknown as Context
+      );
+
+      expect(response).toEqual({
+        statusCode: 400,
+        body: expect.stringContaining(
+          "Template not found for './fixtures/emails/not-here'. A file called 'index.html' must exist within this folder."
+        ),
+      });
+    });
   });
 
   describe("when using SendGrid", () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-      jest.resetModules(); // Most important - it clears the cache
-      process.env = { ...OLD_ENV }; // Make a copy
-      mockSendgridSend.mockClear();
-    });
-
-    afterAll(() => {
-      process.env = OLD_ENV; // Restore old environment
-    });
-
     it("should send email and return 200", async () => {
       const secret = "super-secret";
       process.env.NETLIFY_EMAILS_SECRET = secret;
@@ -327,18 +381,6 @@ describe("Email handler", () => {
   });
 
   describe("when using MailGun", () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-      jest.resetModules(); // Most important - it clears the cache
-      process.env = { ...OLD_ENV }; // Make a copy
-      mockMailgunCreate.mockClear();
-    });
-
-    afterAll(() => {
-      process.env = OLD_ENV; // Restore old environment
-    });
-
     it("should send email and return 200", async () => {
       const secret = "super-secret";
       process.env.NETLIFY_EMAILS_SECRET = secret;
@@ -377,18 +419,6 @@ describe("Email handler", () => {
   });
 
   describe("when using Postmark", () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-      jest.resetModules(); // Most important - it clears the cache
-      process.env = { ...OLD_ENV }; // Make a copy
-      mockPostmarkSendEmail.mockClear();
-    });
-
-    afterAll(() => {
-      process.env = OLD_ENV; // Restore old environment
-    });
-
     it("should send email and return 200", async () => {
       const secret = "super-secret";
       process.env.NETLIFY_EMAILS_SECRET = secret;

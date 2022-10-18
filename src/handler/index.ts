@@ -25,17 +25,6 @@ export const getEmailFromPath = (path: string): string | undefined => {
 
 const handler: Handler = async (event, context) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
-  if (
-    process.env.NETLIFY_EMAILS_SECRET === undefined ||
-    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
-  ) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        message: "Request forbidden",
-      }),
-    };
-  }
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
 
@@ -91,6 +80,18 @@ const handler: Handler = async (event, context) => {
     }
 
     return emailDirectoryHandler(emailTemplatesDirectory);
+  }
+
+  if (
+    process.env.NETLIFY_EMAILS_SECRET === undefined ||
+    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
+  ) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        message: "Request forbidden",
+      }),
+    };
   }
 
   if (event.body === null) {
