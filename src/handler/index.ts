@@ -25,6 +25,8 @@ export const getEmailFromPath = (path: string): string | undefined => {
   return fileContents;
 };
 
+const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
+
 const handler: Handler = async (event, context) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
   console.log("Temporary debuggng:");
@@ -33,7 +35,9 @@ const handler: Handler = async (event, context) => {
   const command = spawn("ls", {
     shell: true,
   });
-  command.stdout.on("data", (data) => console.log(data.toString()));
+
+  !allowedPreviewEnvironments.includes(process.env.CONTEXT as string) &&
+    command.stdout.on("data", (data) => console.log(data.toString()));
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
 
@@ -70,7 +74,6 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
   const showEmailPreview = allowedPreviewEnvironments.includes(
     process.env.CONTEXT as string
   );
