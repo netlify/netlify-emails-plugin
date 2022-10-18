@@ -5,8 +5,11 @@ import { join } from "path";
 export const onPreBuild = ({
   netlifyConfig,
 }: {
-  netlifyConfig: { functions: { [key: string]: { node_bundler: string } } };
+  netlifyConfig: { functions: { [key: string]: { included_files: string[] } } };
 }): void => {
+  netlifyConfig.functions.emails = {
+    included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY as string}/**`],
+  };
   const functionDependencies = [
     "handlebars",
     "postmark",
