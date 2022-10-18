@@ -25,6 +25,40 @@ export const getEmailFromPath = (path: string): string | undefined => {
 
 const handler: Handler = async (event, context) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
+  if (
+    process.env.NETLIFY_EMAILS_SECRET === undefined ||
+    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
+  ) {
+    return {
+      statusCode: 403,
+      body: JSON.stringify({
+        message: "Request forbidden",
+      }),
+    };
+  }
+
+  const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
+
+  if (providerApiKey === undefined) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "An API key must be set for your email provider",
+      }),
+    };
+  }
+
+  const providerName = process.env.NETLIFY_EMAILS_PROVIDER;
+
+  if (providerName === undefined) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "An email API provider name must be set",
+      }),
+    };
+  }
+
   const emailTemplatesDirectory =
     process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
@@ -68,18 +102,6 @@ const handler: Handler = async (event, context) => {
     };
   }
 
-  if (
-    process.env.NETLIFY_EMAILS_SECRET === undefined ||
-    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
-  ) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        message: "Request forbidden",
-      }),
-    };
-  }
-
   const requestBody = JSON.parse(event.body);
 
   if (requestBody.from === undefined) {
@@ -102,28 +124,6 @@ const handler: Handler = async (event, context) => {
   const fileContents = getEmailFromPath(fullEmailPath);
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
-
-  const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
-
-  if (providerApiKey === undefined) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "An API key must be set for your email provider",
-      }),
-    };
-  }
-
-  const providerName = process.env.NETLIFY_EMAILS_PROVIDER;
-
-  if (providerName === undefined) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: "An email API provider name must be set",
-      }),
-    };
-  }
 
   const response = await mailer({
     configuration: {
