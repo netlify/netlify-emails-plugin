@@ -1,8 +1,6 @@
 import { Handler } from "@netlify/functions";
-import { spawn } from "child_process";
 import fs from "fs";
 import Handlebars from "handlebars";
-import { cwd } from "process";
 import mailer from "./mailer";
 import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
 
@@ -29,15 +27,6 @@ const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
 
 const handler: Handler = async (event, context) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
-  console.log("Temporary debuggng:");
-  console.log(`cwd: ${cwd()}`);
-  console.log("ls:");
-  const command = spawn("ls", {
-    shell: true,
-  });
-
-  process.env.NODE_ENV !== "test" &&
-    command.stdout.on("data", (data) => console.log(data.toString()));
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
 
