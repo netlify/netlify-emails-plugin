@@ -1,4 +1,25 @@
-import { set } from "lodash";
+const isObject = (input: any): any =>
+  input !== null &&
+  typeof input === "object" &&
+  // eslint-disable-next-line no-prototype-builtins
+  Object.getPrototypeOf(input).isPrototypeOf(Object);
+
+const setByString = (obj: any, path: string, value: any): void => {
+  const pList = Array.isArray(path) ? path : path.split(".");
+  const len = pList.length;
+  // changes second last key to {}
+  for (let i = 0; i < len - 1; i++) {
+    const elem = pList[i];
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (!obj[elem] || !isObject(obj[elem])) {
+      obj[elem] = {};
+    }
+    obj = obj[elem];
+  }
+
+  // set value to second last key
+  obj[pList[len - 1]] = value;
+};
 
 export const getHBValues = (text: string): { [key: string]: string | [] } => {
   const re = /{{{?(.*?)}?}}/g;
@@ -17,8 +38,7 @@ export const getHBValues = (text: string): { [key: string]: string | [] } => {
   const setVar = (variable: string, val: string | true): void => {
     // Dot Notation Breakdown
     if (/\.+/.test(variable) && !/\s/.test(variable)) {
-      const notation = variable.split(".");
-      set(context, notation, "");
+      setByString(context, variable, "");
     } else {
       context[variable.trim()] = val;
     }
