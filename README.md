@@ -68,11 +68,12 @@ With node-fetch:
       },
       method: "POST",
       body: JSON.stringify({
-        from: "lewis@reflr.io",
-        to: party.hostEmail,
-        subject: "Someone is coming to your party",
+        from: "no-reply@yourdomain.com",
+        to: "alexanderhamilton@test.com",
+        subject: "Welcome",
         parameters: {
-          name: requestBody.invitee,
+          products: ["product1", "product2", "product3"]
+          name: "Alexander",
         },
       }),
     }
