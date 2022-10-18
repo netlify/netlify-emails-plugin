@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.9...v0.0.10) (2022-10-18)
+
+
+### Bug Fixes
+
+* lambda has access to email files ([90b7fbf](https://github.com/netlify/netlify-emails-plugin/commit/90b7fbf50ae662cb322e99d95caffb5333bc24b2))
+
 ## [0.0.9](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.8...v0.0.9) (2022-10-18)
 
 
