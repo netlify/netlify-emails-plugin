@@ -12,11 +12,20 @@ export const emailDirectoryHandler = (
 ): { statusCode: number; body: string } => {
   const emails: string[] = [];
 
-  fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
-    if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
-      emails.push(`/${folder}`);
-    }
-  });
+  try {
+    fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
+      if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
+        emails.push(`/${folder}`);
+      }
+    });
+  } catch (e) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify(
+        `Unable to read emails from email directory '${emailDirectory}'. Please ensure this directory exists or change the email directory by updating the NETLIFY_EMAILS_DIRECTORY environment variable.`
+      ),
+    };
+  }
 
   let templateList = "";
   emails.forEach((email) => {
@@ -59,15 +68,35 @@ export const emailPreviewHandler = (
     | undefined
 ): { statusCode: number; body: string } => {
   const emails: string[] = [];
-  fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
-    if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
-      emails.push(`/${folder}`);
-    }
-  });
+  try {
+    fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
+      if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
+        emails.push(`/${folder}`);
+      }
+    });
+  } catch (e) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify(
+        `Unable to read emails from email directory '${emailDirectory}'. Please ensure this directory exists or change the email directory by updating the NETLIFY_EMAILS_DIRECTORY environment variable.`
+      ),
+    };
+  }
 
-  const emailTemplateFile = fs
-    .readFileSync(`./${emailDirectory}/${email}/index.html`)
-    .toString();
+  let emailTemplateFile: string;
+  try {
+    emailTemplateFile = fs
+      .readFileSync(`./${emailDirectory}/${email}/index.html`)
+      .toString();
+  } catch (e) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify(
+        `Template not found for '${emailDirectory}/${email}'. A file called 'index.html' must exist within this folder.`
+      ),
+    };
+  }
+
   const template = Handlebars.compile(emailTemplateFile.toString());
   const hbValues = getHBValues(emailTemplateFile.toString());
   const parameters = Object.keys(hbValues).map((key) => {
