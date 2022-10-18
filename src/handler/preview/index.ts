@@ -51,9 +51,12 @@ export const emailDirectoryHandler = (
 export const emailPreviewHandler = (
   email: string,
   emailDirectory: string,
-  queryParameters: {
-    [name: string]: string | undefined;
-  } | null
+  queryParameters:
+    | {
+        [name: string]: string | undefined;
+      }
+    | null
+    | undefined
 ): { statusCode: number; body: string } => {
   const emails: string[] = [];
   fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
@@ -77,6 +80,7 @@ export const emailPreviewHandler = (
   });
   const convertedParams: any = {};
   queryParameters !== null &&
+    queryParameters !== undefined &&
     Object.keys(queryParameters).forEach((param) => {
       if (param.includes("_array")) {
         const queryValue = queryParameters[param];
