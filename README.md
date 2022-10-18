@@ -35,12 +35,14 @@ If there are variables that need replacing in your email template when the email
 
 ## Step 4: Triggering an Email
 
-Once deployed, you can now trigger the email handler by calling the following endpoint:
+You can now trigger the email handler by calling the following endpoint
+
+With curl:
 
 ```
 curl -X POST \
-  'https://yourdomain.com/.netlify/functions/emails/welcome' \
-  --header 'netlify-emails-secret: NETLIFY_EMAILS_SECRET' \
+  '{process.env.URL}/.netlify/functions/emails/welcome' \
+  --header 'netlify-emails-secret: process.env.NETLIFY_EMAILS_SECRET' \
   --header 'Content-Type: application/json' \
   --data-raw '{
   "from": "no-reply@yourdomain.com",
@@ -53,23 +55,31 @@ curl -X POST \
 }'
 ```
 
-You can also trigger the email locally by running `netlify build`, then `netlify dev` and calling:
+With node-fetch:
 
 ```
-curl -X POST \
-  'http://localhost:{PORT}/.netlify/functions/emails/welcome' \
-  --header 'netlify-emails-secret: NETLIFY_EMAILS_SECRET' \
-  --header 'Content-Type: application/json' \
-  --data-raw '{
-  "from": "no-reply@yourdomain.com",
-  "to": "alexanderhamilton@test.com",
-  "subject": "Welcome",
-  "parameters": {
-    "products": ["product1", "product2", "product3"]
-    "name": "Alexander",
-  }
-}'
+ import fetch from 'node-fetch'
+
+ await fetch(
+    `${process.env.URL}/.netlify/functions/emails/confirm`,
+    {
+      headers: {
+        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        from: "lewis@reflr.io",
+        to: party.hostEmail,
+        subject: "Someone is coming to your party",
+        parameters: {
+          name: requestBody.invitee,
+        },
+      }),
+    }
+  );
 ```
+
+You can also trigger the email locally by running `netlify build`, then `netlify dev` and making the above request.
 
 ## Step 5: Previewing emails locally
 
