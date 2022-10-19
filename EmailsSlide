@@ -1,0 +1,66 @@
+---
+marp: true
+---
+
+# What bad email experiences have we seen in the past?
+
+It's safe to say we can split up these experiences into two categories.
+
+- Tasks that take time ⏳
+- Bad DX 😖
+
+---
+
+# Previewing emails 😖
+
+Often developers find that with their setup, there is no ability to preview emails as they are developed 😖
+
+Some sites like MailChimp offer WISIWYG editors, but this is not source controlled
+
+---
+
+# Injecting parameters ⏳
+
+Developers have to solutionise over how they will inject parameters into the email html.
+
+Often developers want to inject arrays. For example, a marketing email might want to include a list of products the user has subscribed to. Finding the right solution and implementing it takes time.
+
+---
+
+# Testing 😖
+
+For emails to be tested in the same way as any other web component, they need to live in the same respository as the front end code.
+
+There is nothing worse than fishing around inside a backend service trying to find email templates, only to realise that the only way you can test them is to send an email to someone.
+
+---
+
+# Routing requests ⏳
+
+Once you have a directory of email templates, developers need to create an endpoint that routes requests to the relevant email template.
+
+---
+
+# Protecting any email service ⏳
+
+If a developer is going to create an email service, they are going to need to make sure it is not exposed to the public.
+
+---
+
+# Developers want simplicity
+
+In a survey conducted with 1 developer who liked the recent Hackathon project, we asked:
+
+```
+Why did you like the emails idea? What was the first thing that you liked?
+```
+
+The answer was:
+
+```
+I was thinking from the perspective of a dev who doesn’t want to see up yet another thing.
+
+The DX paired with not having to read a bunch of yet another company’s docs
+```
+
+Simplicity = speed
