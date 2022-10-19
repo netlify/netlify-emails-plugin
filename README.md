@@ -47,6 +47,8 @@ curl -X POST \
   --data-raw '{
   "from": "no-reply@yourdomain.com",
   "to": "alexanderhamilton@test.com",
+  "cc": "cc@test.com",
+  "bcc": "bcc@test.com",
   "subject": "Welcome",
   "parameters": {
     "products": ["product1", "product2", "product3"]
@@ -61,7 +63,7 @@ With node-fetch:
  import fetch from 'node-fetch'
 
  await fetch(
-    `${process.env.URL}/.netlify/functions/emails/confirm`,
+    `${process.env.URL}/.netlify/functions/emails/welcome`,
     {
       headers: {
         "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
@@ -70,6 +72,8 @@ With node-fetch:
       body: JSON.stringify({
         from: "no-reply@yourdomain.com",
         to: "alexanderhamilton@test.com",
+        cc: "cc@test.com",
+        bcc: "bcc@test.com",
         subject: "Welcome",
         parameters: {
           products: ["product1", "product2", "product3"]
