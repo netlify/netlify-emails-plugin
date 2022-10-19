@@ -1,5 +1,24 @@
 <head>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function copySnippet() {
+      var r = document.createRange();
+      r.selectNode(document.getElementById("fetchSnippet"));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(r);
+
+      document.execCommand("copy");
+      window.getSelection().removeAllRanges();
+    }
+  </script>
+  <link
+    rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/monokai-sublime.min.css"
+  />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+  <script>
+    hljs.highlightAll();
+  </script>
 </head>
 <title>Email Preview</title>
 <body>
@@ -21,29 +40,6 @@
       </div>
       <div class="px-10 py-5 flex flex-col">
         <div
-          class="max-w-[450px] bg-white border border-gray-300 rounded-lg shadow shadow-gray flex flex-col text-gray mt-6 min-w-full p-6"
-        >
-          <h1
-            class="flex font-semibold gap-1 justify-start leading-tight text-2xl text-[#343832] after:content-none md:justify-between"
-          >
-            Netlify Emails
-          </h1>
-          <p class="mt-2">
-            Manage sending emails and editing templates—all without rolling your
-            own email service.
-          </p>
-          <p class="mt-3">
-            <a
-              class="text-[#054861] inline-block font-bold pr-3 mt-1 underline rounded-sm focus:outline focus:outline-1 hover:no-underline dark:text-teal dark:focus:outline-teal-lightest"
-              target="_blank"
-              rel="noopener"
-              href="#"
-              >Learn more about super simple emails in the docs</a
-            >
-          </p>
-        </div>
-
-        <div
           class="max-w-[450px] bg-white border border-gray-300 rounded-lg shadow shadow-gray flex flex-col mt-6 min-w-full p-6"
         >
           <h2 class="text-l font-semibold">Preview emails with parameters</h2>
@@ -60,6 +56,27 @@
               Preview
             </button>
           </form>
+        </div>
+
+        <div
+          class="max-w-[450px] bg-white border border-gray-300 rounded-lg shadow shadow-gray flex flex-col mt-6 min-w-full p-6"
+        >
+          <div class="flex flex-row justify-between items-center mb-2">
+            <h2 class="text-l font-semibold">Fetch.js</h2>
+            <button
+              onclick="copySnippet()"
+              class="px-4 py-2 bg-[#5cebdf] text-[#054861] rounded-md text-center hover:bg-[#9ff9e1]"
+            >
+              Copy
+            </button>
+          </div>
+          <pre>
+            <code
+              class="overflow-x-hidden h-[250px] language-js"
+              id="fetchSnippet"
+            >
+            </code>
+          </pre>
         </div>
       </div>
     </div>
