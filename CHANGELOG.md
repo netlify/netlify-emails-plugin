@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.13](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.12...v0.0.13) (2022-10-19)
+
+
+### Features
+
+* add fetch snippet ([f7bd8b0](https://github.com/netlify/netlify-emails-plugin/commit/f7bd8b0558138178f1987b04074361b14c04136e))
+
 ## [0.0.12](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.11...v0.0.12) (2022-10-19)
 
 
