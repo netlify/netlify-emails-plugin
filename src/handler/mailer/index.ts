@@ -8,6 +8,8 @@ export interface IEmailRequest {
   to: string;
   subject: string;
   html: string;
+  cc?: string;
+  bcc?: string;
 }
 
 interface IEmailConfig {
@@ -67,6 +69,8 @@ const mailer = async ({
             to: request.to,
             subject: request.subject,
             html: request.html,
+            cc: request.cc,
+            bcc: request.bcc,
           }
         );
         if (result.status !== 200) {
@@ -87,6 +91,8 @@ const mailer = async ({
           To: request.to,
           Subject: request.subject,
           HtmlBody: request.html,
+          Cc: request.cc,
+          Bcc: request.bcc,
         });
 
         if (result.ErrorCode !== 0) {
@@ -107,6 +113,8 @@ const mailer = async ({
           to: request.to,
           subject: request.subject,
           html: request.html,
+          cc: request.cc,
+          bcc: request.bcc,
         });
       } catch (e) {
         const error = e as { code: number; message: string };
