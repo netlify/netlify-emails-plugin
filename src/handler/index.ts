@@ -136,6 +136,8 @@ const handler: Handler = async (event, context) => {
     request: {
       from: requestBody.from,
       to: requestBody.to,
+      cc: requestBody.cc,
+      bcc: requestBody.bcc,
       subject: requestBody.subject ?? "",
       html: renderedTemplate,
     },

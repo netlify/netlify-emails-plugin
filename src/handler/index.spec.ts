@@ -47,6 +47,17 @@ jest.mock("fs", () => ({
   },
 }));
 
+const validEmailRequestBody = JSON.stringify({
+  to: "someone@test.com",
+  from: "somebody@test.com",
+  subject: "Test Subject",
+  cc: "cc@test.com",
+  bcc: "bcc@test.com",
+  parameters: {
+    name: "Alexander Hamilton",
+  },
+});
+
 describe("Email handler", () => {
   const OLD_ENV = process.env;
 
@@ -71,14 +82,7 @@ describe("Email handler", () => {
 
     const response = await handler(
       {
-        body: JSON.stringify({
-          to: "someone@test.com",
-          from: "somebody@test.com",
-          subject: "Test Subject",
-          parameters: {
-            name: "Alexander Hamilton",
-          },
-        }),
+        body: validEmailRequestBody,
         headers: { "netlify-emails-secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails",
         httpMethod: "POST",
@@ -100,14 +104,7 @@ describe("Email handler", () => {
 
     const response = await handler(
       {
-        body: JSON.stringify({
-          to: "someone@test.com",
-          from: "somebody@test.com",
-          subject: "Test Subject",
-          parameters: {
-            name: "Alexander Hamilton",
-          },
-        }),
+        body: validEmailRequestBody,
         headers: { "netlify-emails-secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
@@ -131,14 +128,7 @@ describe("Email handler", () => {
 
     const response = await handler(
       {
-        body: JSON.stringify({
-          to: "someone@test.com",
-          from: "somebody@test.com",
-          subject: "Test Subject",
-          parameters: {
-            name: "Alexander Hamilton",
-          },
-        }),
+        body: validEmailRequestBody,
         headers: { "netlify-emails-secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
@@ -204,7 +194,7 @@ describe("Email handler", () => {
     });
   });
 
-  it("should reject request when no from address provided", async () => {
+  it("should reject request when no to address provided", async () => {
     const secret = "super-secret";
     process.env.NETLIFY_EMAILS_SECRET = secret;
     process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
@@ -352,14 +342,7 @@ describe("Email handler", () => {
       process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
       const response = await handler(
         {
-          body: JSON.stringify({
-            to: "someone@test.com",
-            from: "somebody@test.com",
-            subject: "Test Subject",
-            parameters: {
-              name: "Alexander Hamilton",
-            },
-          }),
+          body: validEmailRequestBody,
           headers: { "netlify-emails-secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
@@ -374,6 +357,8 @@ describe("Email handler", () => {
       expect(mockSendgridSend).toHaveBeenCalledWith({
         from: "somebody@test.com",
         to: "someone@test.com",
+        cc: "cc@test.com",
+        bcc: "bcc@test.com",
         subject: "Test Subject",
         html: expect.stringContaining("Alexander Hamilton"),
       });
@@ -390,14 +375,7 @@ describe("Email handler", () => {
       process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN = "domain.com";
       const response = await handler(
         {
-          body: JSON.stringify({
-            to: "someone@test.com",
-            from: "somebody@test.com",
-            subject: "Test Subject",
-            parameters: {
-              name: "Alexander Hamilton",
-            },
-          }),
+          body: validEmailRequestBody,
           headers: { "netlify-emails-secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
@@ -412,6 +390,8 @@ describe("Email handler", () => {
       expect(mockMailgunCreate).toHaveBeenCalledWith("domain.com", {
         from: "somebody@test.com",
         to: "someone@test.com",
+        cc: "cc@test.com",
+        bcc: "bcc@test.com",
         subject: "Test Subject",
         html: expect.stringContaining("Alexander Hamilton"),
       });
@@ -427,14 +407,7 @@ describe("Email handler", () => {
       process.env.NETLIFY_EMAILS_PROVIDER = "postmark";
       const response = await handler(
         {
-          body: JSON.stringify({
-            to: "someone@test.com",
-            from: "somebody@test.com",
-            subject: "Test Subject",
-            parameters: {
-              name: "Alexander Hamilton",
-            },
-          }),
+          body: validEmailRequestBody,
           headers: { "netlify-emails-secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
@@ -449,6 +422,8 @@ describe("Email handler", () => {
       expect(mockPostmarkSendEmail).toHaveBeenCalledWith({
         From: "somebody@test.com",
         To: "someone@test.com",
+        Cc: "cc@test.com",
+        Bcc: "bcc@test.com",
         Subject: "Test Subject",
         HtmlBody: expect.stringContaining("Alexander Hamilton"),
       });
