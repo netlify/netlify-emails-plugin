@@ -7,7 +7,11 @@
     "lib/**/*",
     "manifest.yml"
   ],
-  "types": "index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./mailer": "./lib/mailer/index.js"
+  },
+  "types": "./lib/index.d.ts",
   "dependencies": {
     "@netlify/functions": "^1.2.0",
     "@sendgrid/mail": "^7.7.0",
@@ -15,7 +19,7 @@
     "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
     "mailgun.js": "^8.0.1",
-    "node-fetch": "^3.2.10",
+    "node-fetch": "2",
     "path": "^0.12.7",
     "postmark": "^3.0.14",
     "tslib": "^2.4.0"
@@ -49,6 +53,7 @@
     "@types/jest": "^29.1.1",
     "@types/lodash": "^4.14.186",
     "@types/node": "^18.7.14",
+    "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "babel-jest": "^29.1.2",
     "eslint": "^8.0.1",
