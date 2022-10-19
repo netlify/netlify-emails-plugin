@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.12](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.11...v0.0.12) (2022-10-19)
+
+
+### Bug Fixes
+
+* Remove mailer export ([984fd0a](https://github.com/netlify/netlify-emails-plugin/commit/984fd0a45afea52b64197114761a670a99670ccb))
+
 ## [0.0.11](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.10...v0.0.11) (2022-10-19)
 
 
