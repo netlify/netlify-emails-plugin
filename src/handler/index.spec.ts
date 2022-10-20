@@ -83,7 +83,7 @@ describe("Email handler", () => {
     const response = await handler(
       {
         body: validEmailRequestBody,
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails",
         httpMethod: "POST",
       } as unknown as Event,
@@ -105,7 +105,7 @@ describe("Email handler", () => {
     const response = await handler(
       {
         body: validEmailRequestBody,
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
       } as unknown as Event,
@@ -129,7 +129,7 @@ describe("Email handler", () => {
     const response = await handler(
       {
         body: validEmailRequestBody,
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
       } as unknown as Event,
@@ -152,7 +152,7 @@ describe("Email handler", () => {
     const response = await handler(
       {
         body: null,
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
       } as unknown as Event,
@@ -181,7 +181,7 @@ describe("Email handler", () => {
             name: "Alexander Hamilton",
           },
         }),
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
       } as unknown as Event,
@@ -210,7 +210,7 @@ describe("Email handler", () => {
             name: "Alexander Hamilton",
           },
         }),
-        headers: { "netlify-emails-secret": secret },
+        headers: { "Netlify-Emails-Secret": secret },
         rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
         httpMethod: "POST",
       } as unknown as Event,
@@ -343,7 +343,7 @@ describe("Email handler", () => {
       const response = await handler(
         {
           body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
+          headers: { "Netlify-Emails-Secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
         } as unknown as Event,
@@ -376,7 +376,7 @@ describe("Email handler", () => {
       const response = await handler(
         {
           body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
+          headers: { "Netlify-Emails-Secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
         } as unknown as Event,
@@ -408,7 +408,7 @@ describe("Email handler", () => {
       const response = await handler(
         {
           body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
+          headers: { "Netlify-Emails-Secret": secret },
           rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
           httpMethod: "POST",
         } as unknown as Event,
