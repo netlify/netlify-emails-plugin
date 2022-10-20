@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.16](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.14...v0.0.16) (2022-10-20)
+
+
+### Bug Fixes
+
+* include src folder ([f9d472e](https://github.com/netlify/netlify-emails-plugin/commit/f9d472eb411c1b2bf54035e107176ac5a3a5dbc2))
+
 ## [0.0.14](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.13...v0.0.14) (2022-10-20)
 
 
