@@ -147,7 +147,7 @@ export const emailPreviewHandler = (
   \`\${process.env.URL}/.netlify/functions/emails/${email}\`,
   {
     headers: {
-      "Netlify-Emails-Secret": process.env.NETLIFY_EMAILS_SECRET,
+      "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
     },
     method: "POST",
     body: JSON.stringify({
