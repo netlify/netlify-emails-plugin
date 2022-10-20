@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.14](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.13...v0.0.14) (2022-10-20)
+
+
+### Features
+
+* :monocle_face: Support all ts builds and await deps added ([9d7dd9e](https://github.com/netlify/netlify-emails-plugin/commit/9d7dd9e06f5221ec34cf50b36fd4ef44980f6740))
+* support all forms of ts compilation and await dep installation ([6b90b45](https://github.com/netlify/netlify-emails-plugin/commit/6b90b4540170e25e30d241e4b40088eafc8fe98f))
+
 ## [0.0.13](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.12...v0.0.13) (2022-10-19)
 
 
