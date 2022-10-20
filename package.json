@@ -5,6 +5,7 @@
   "main": "./lib/index.js",
   "files": [
     "lib/**/*",
+    "src/**/*",
     "manifest.yml"
   ],
   "types": "index.d.ts",
@@ -21,9 +22,8 @@
     "tslib": "^2.4.0"
   },
   "scripts": {
-    "copy-html": "cp src/handler/preview/preview.html lib/handler/preview/preview.html && cp src/handler/preview/directory.html lib/handler/preview/directory.html",
-    "build": "tsc --project tsconfig.build.json && yarn copy-html",
-    "watch": "yarn copy-html && tsc --project tsconfig.build.json --watch",
+    "build": "tsc --project tsconfig.build.json",
+    "watch": "tsc --project tsconfig.build.json --watch",
     "test": "jest",
     "prepare": "husky install"
   },
