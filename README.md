@@ -58,7 +58,7 @@ With curl:
 ```
 curl -X POST \
   '{process.env.URL}/.netlify/functions/emails/welcome' \
-  --header 'Netlify-Emails-Secret: process.env.NETLIFY_EMAILS_SECRET' \
+  --header 'netlify-emails-secret: process.env.NETLIFY_EMAILS_SECRET' \
   --header 'Content-Type: application/json' \
   --data-raw '{
   "from": "no-reply@yourdomain.com",
@@ -82,7 +82,7 @@ With node-fetch:
     `${process.env.URL}/.netlify/functions/emails/welcome`,
     {
       headers: {
-        "Netlify-Emails-Secret": process.env.NETLIFY_EMAILS_SECRET,
+        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
       },
       method: "POST",
       body: JSON.stringify({
