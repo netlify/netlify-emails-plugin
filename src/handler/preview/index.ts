@@ -143,37 +143,33 @@ export const emailPreviewHandler = (
     }
   });
 
-  const fetchSnippet = `
-    await fetch(
-      \`\${process.env.URL}/.netlify/functions/emails/${email}\`,
-      {
-        headers: {
-          "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
-        },
-        method: "POST",
-        body: JSON.stringify({
-          from: "",
-          to: "",
-          cc: "",
-          bcc: "",
-          subject: "",
-          parameters: {
-            ${parameters
-              .map((param) => {
-                if (param[1] === "array") {
-                  return `${param[0]}: []`;
-                }
-                if (param[1] === "string") {
-                  return `${param[0]}: ""`;
-                }
-                return "";
-              })
-              .join(", \n            ")}
-          },
-        }),
-      }
-    );
-  `;
+  const fetchSnippet = `await fetch(
+  \`\${process.env.URL}/.netlify/functions/emails/${email}\`,
+  {
+    headers: {
+      "Netlify-Emails-Secret": process.env.NETLIFY_EMAILS_SECRET,
+    },
+    method: "POST",
+    body: JSON.stringify({
+      from: "",
+      to: "",
+      subject: "",
+      parameters: {
+        ${parameters
+          .map((param) => {
+            if (param[1] === "array") {
+              return `${param[0]}: []`;
+            }
+            if (param[1] === "string") {
+              return `${param[0]}: ""`;
+            }
+            return "";
+          })
+          .join(", \n            ")}
+      },
+    }),
+  }
+);`;
 
   let templateList = "";
   emails.forEach((email) => {
