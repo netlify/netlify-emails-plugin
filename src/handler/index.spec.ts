@@ -365,7 +365,7 @@ describe("Email handler", () => {
     });
   });
 
-  describe("when using MailGun", () => {
+  describe("when using Mailgun", () => {
     it("should send email and return 200", async () => {
       const secret = "super-secret";
       process.env.NETLIFY_EMAILS_SECRET = secret;
