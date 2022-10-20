@@ -4,6 +4,16 @@
 
 The Netlify emails build plugin which is responsible for creating a serverless function to handle email requests, populating them with the provided templates and sending them using the specified email API provider.
 
+## Supported email providers
+
+- Mailgun
+- SendGrid
+- Postmark
+
+## Prerequisites
+
+You must setup an account with one of our supported email providers listed above. You will also need to ensure your account is verified by the provider and you have provided authorisation for emails to be sent from any email address you send from.
+
 ## Step 1: Enabling the plugin
 
 Either add it to the `netlify.toml` as follows:
@@ -31,9 +41,15 @@ The following environment variables are required in order for the emails functio
 
 Now that the setup is complete, you can add templates to your email directory. Each email template should be stored under a folder name that represents the route of your template and the email file should be named `index.html`. E.g. `./emails/welcome/index.html`.
 
-If there are variables that need replacing in your email template when the email is triggered, please use the [handlebars.js](https://handlebarsjs.com/) syntax and pass the arguments in the request as shown in Step 4 below.
+If there are variables that need replacing in your email template when the email is triggered, please use the [handlebars.js](https://handlebarsjs.com/) syntax and pass the arguments in the request as shown in Step 5 below.
 
-## Step 4: Triggering an Email
+## Step 4: Previewing emails locally
+
+Visit `http://localhost:{PORT}/.netlify/functions/emails/_preview` to preview your email templates.
+
+Please note, this preview endpoint is not made available in production and is only made available locally or when viewing a deploy preview.
+
+## Step 5: Triggering an Email
 
 You can now trigger the email handler by calling the following endpoint
 
@@ -42,7 +58,7 @@ With curl:
 ```
 curl -X POST \
   '{process.env.URL}/.netlify/functions/emails/welcome' \
-  --header 'netlify-emails-secret: process.env.NETLIFY_EMAILS_SECRET' \
+  --header 'Netlify-Emails-Secret: process.env.NETLIFY_EMAILS_SECRET' \
   --header 'Content-Type: application/json' \
   --data-raw '{
   "from": "no-reply@yourdomain.com",
@@ -66,7 +82,7 @@ With node-fetch:
     `${process.env.URL}/.netlify/functions/emails/welcome`,
     {
       headers: {
-        "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
+        "Netlify-Emails-Secret": process.env.NETLIFY_EMAILS_SECRET,
       },
       method: "POST",
       body: JSON.stringify({
@@ -85,9 +101,3 @@ With node-fetch:
 ```
 
 You can also trigger the email locally by running `netlify build`, then `netlify dev` and making the above request.
-
-## Step 5: Previewing emails locally
-
-Visit `http://localhost:{PORT}/.netlify/functions/emails/_preview` to preview your email templates.
-
-Please note, this preview endpoint is not made available in production and is only made available locally or when viewing a deploy preview.

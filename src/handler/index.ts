@@ -85,7 +85,7 @@ const handler: Handler = async (event, context) => {
 
   if (
     process.env.NETLIFY_EMAILS_SECRET === undefined ||
-    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
+    event.headers["Netlify-Emails-Secret"] !== process.env.NETLIFY_EMAILS_SECRET
   ) {
     return {
       statusCode: 403,

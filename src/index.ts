@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { execSync } from "child_process";
 import fs from "fs";
 import { join } from "path";
 
@@ -20,7 +20,7 @@ export const onPreBuild = ({
   ];
 
   console.log("Installing email function dependencies");
-  exec(`npm install ${functionDependencies.join(" ")} -D`);
+  execSync(`npm install ${functionDependencies.join(" ")} -D`);
   console.log("Installed email function dependencies");
 
   const emailFunctionDirectory = join(
@@ -33,15 +33,15 @@ export const onPreBuild = ({
     recursive: true,
   });
   fs.copyFileSync(
-    join(__dirname, "handler", "index.js"),
-    join(emailFunctionDirectory, "index.js")
+    join(__dirname, "../src", "handler", "index.ts"),
+    join(emailFunctionDirectory, "index.ts")
   );
   fs.mkdirSync(join(emailFunctionDirectory, "mailer"), {
     recursive: true,
   });
   fs.copyFileSync(
-    join(__dirname, "handler", "mailer", "index.js"),
-    join(emailFunctionDirectory, "mailer", "index.js")
+    join(__dirname, "../src", "handler", "mailer", "index.ts"),
+    join(emailFunctionDirectory, "mailer", "index.ts")
   );
   fs.mkdirSync(join(emailFunctionDirectory, "preview"), {
     recursive: true,
@@ -50,19 +50,19 @@ export const onPreBuild = ({
     recursive: true,
   });
   fs.copyFileSync(
-    join(__dirname, "handler", "preview", "index.js"),
-    join(emailFunctionDirectory, "preview", "index.js")
+    join(__dirname, "../src", "handler", "preview", "index.ts"),
+    join(emailFunctionDirectory, "preview", "index.ts")
   );
   fs.copyFileSync(
-    join(__dirname, "handler", "preview", "preview.html"),
+    join(__dirname, "../src", "handler", "preview", "preview.html"),
     join(emailFunctionDirectory, "preview", "preview.html")
   );
   fs.copyFileSync(
-    join(__dirname, "handler", "preview", "directory.html"),
+    join(__dirname, "../src", "handler", "preview", "directory.html"),
     join(emailFunctionDirectory, "preview", "directory.html")
   );
   fs.copyFileSync(
-    join(__dirname, "handler", "utils", "handlebars.js"),
-    join(emailFunctionDirectory, "utils", "handlebars.js")
+    join(__dirname, "../src", "handler", "utils", "handlebars.ts"),
+    join(emailFunctionDirectory, "utils", "handlebars.ts")
   );
 };
