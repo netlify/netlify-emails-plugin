@@ -12,7 +12,7 @@ The Netlify emails build plugin which is responsible for creating a serverless f
 
 ## Prerequisites
 
-You must setup an account with one of our supported email providers listed above. You will also need to ensure your account is verified by the provider and you have provided authorisation for emails to be sent from any email address you send from.
+You must setup an account with one of our supported email providers listed above. You will also need to ensure your account is verified by the email provider and you have provided authorisation for emails to be sent from any email address you send from.
 
 ## Step 1: Enabling the plugin
 
