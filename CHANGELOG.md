@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.17](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.16...v0.0.17) (2022-10-20)
+
+
+### Bug Fixes
+
+* fix header ([49fa9a3](https://github.com/netlify/netlify-emails-plugin/commit/49fa9a327f8f8dbee8ba89306662cf4d0aba2780))
+
 ## [0.0.16](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.14...v0.0.16) (2022-10-20)
 
 
