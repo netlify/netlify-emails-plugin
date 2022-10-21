@@ -22,7 +22,7 @@ Alternatively, add it to the `netlify.toml` as follows:
 
 ```
 [[plugins]]
-  package = "@netlify/emails-plugin"
+  package = "@netlify/plugin-emails"
 ```
 
 ## Step 2: Configuration
