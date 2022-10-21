@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.18](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.17...v0.0.18) (2022-10-21)
+
+
+### Features
+
+* add contributing md ([d37480f](https://github.com/netlify/netlify-emails-plugin/commit/d37480fbd3b5dfaa56f7884a8ba8a8c755a826a2))
+* readme w/ handlebar eg & config screenshots ([725023b](https://github.com/netlify/netlify-emails-plugin/commit/725023b31c3f41e4b6b12e19d6170352a1bf15a7))
+
 ## [0.0.17](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.16...v0.0.17) (2022-10-20)
 
 
