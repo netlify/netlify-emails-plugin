@@ -5,11 +5,25 @@ import { join } from "path";
 export const onPreBuild = ({
   netlifyConfig,
 }: {
-  netlifyConfig: { functions: { [key: string]: { included_files: string[] } } };
+  netlifyConfig: {
+    build: { environment: { [key: string]: string | boolean } };
+    functions: {
+      [key: string]: {
+        included_files: string[];
+        external_node_modules?: string[];
+        node_bundler: string;
+      };
+    };
+  };
 }): void => {
   netlifyConfig.functions.emails = {
     included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY as string}/**`],
+    external_node_modules: ["mjml-core", "uglify-js"],
+    node_bundler: "esbuild",
   };
+
+  // netlifyConfig.build.environment.NETLIFY_EXPERIMENTAL_PROCESS_DYNAMIC_IMPORTS =
+  //   true;
   const functionDependencies = [
     "handlebars",
     "postmark",
@@ -17,6 +31,7 @@ export const onPreBuild = ({
     "form-data",
     "mailgun.js",
     "cheerio",
+    "mjml-core",
   ];
 
   console.log("Installing email function dependencies");
