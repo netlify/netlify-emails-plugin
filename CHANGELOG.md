@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.17...v0.1.0) (2022-10-21)
+
+
+### Features
+
+* readme w/ handlebar eg & config screenshots ([725023b](https://github.com/netlify/netlify-emails-plugin/commit/725023b31c3f41e4b6b12e19d6170352a1bf15a7))
+
 ## [0.0.17](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.16...v0.0.17) (2022-10-20)
 
 
