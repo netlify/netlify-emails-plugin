@@ -2,6 +2,7 @@ import fs from "fs";
 import { join } from "path";
 import * as cheerio from "cheerio";
 import { getHBValues } from "../utils/handlebars";
+import mjml2html from "mjml";
 import Handlebars from "handlebars";
 
 const capitalizeFirstLetter = (string: string): string =>
@@ -15,6 +16,8 @@ export const emailDirectoryHandler = (
   try {
     fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
       if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
+        emails.push(`/${folder}`);
+      } else if (fs.existsSync(`./${emailDirectory}/${folder}/index.mjml`)) {
         emails.push(`/${folder}`);
       }
     });
@@ -72,6 +75,8 @@ export const emailPreviewHandler = (
     fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
       if (fs.existsSync(`./${emailDirectory}/${folder}/index.html`)) {
         emails.push(`/${folder}`);
+      } else if (fs.existsSync(`./${emailDirectory}/${folder}/index.mjml`)) {
+        emails.push(`/${folder}`);
       }
     });
   } catch (e) {
@@ -83,20 +88,34 @@ export const emailPreviewHandler = (
     };
   }
 
-  let emailTemplateFile: string;
+  let emailTemplateFile: string | undefined;
   try {
-    emailTemplateFile = fs
-      .readFileSync(`./${emailDirectory}/${email}/index.html`)
-      .toString();
+    if (fs.existsSync(`./${emailDirectory}/${email}/index.html`)) {
+      emailTemplateFile = fs
+        .readFileSync(`./${emailDirectory}/${email}/index.html`)
+        .toString();
+    } else if (fs.existsSync(`./${emailDirectory}/${email}/index.mjml`)) {
+      emailTemplateFile = mjml2html(
+        fs.readFileSync(`./${emailDirectory}/${email}/index.mjml`).toString()
+      ).html;
+    }
   } catch (e) {
     return {
       statusCode: 400,
       body: JSON.stringify(
-        `Template not found for '${emailDirectory}/${email}'. A file called 'index.html' must exist within this folder.`
+        `Template not found for '${emailDirectory}/${email}'. A file called 'index.html' or 'index.mjml' must exist within this folder.`
       ),
     };
   }
 
+  if (emailTemplateFile === undefined) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify(
+        `Template not found for '${emailDirectory}/${email}'. A file called 'index.html' or 'index.mjml' must exist within this folder.`
+      ),
+    };
+  }
   const template = Handlebars.compile(emailTemplateFile.toString());
   const hbValues = getHBValues(emailTemplateFile.toString());
   const parameters = Object.keys(hbValues).map((key) => {

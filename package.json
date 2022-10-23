@@ -17,7 +17,7 @@
     "form-data": "^4.0.0",
     "handlebars": "^4.7.7",
     "mailgun.js": "^8.0.1",
-    "mjml-core": "^4.13.0",
+    "mjml": "^4.13.0",
     "node-fetch": "^3.2.10",
     "path": "^0.12.7",
     "postmark": "^3.0.14",
@@ -46,7 +46,6 @@
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
-    "@netlify/build": "^27.1.4",
     "@netlify/eslint-config-node": "^6.0.0",
     "@types/jest": "^29.1.1",
     "@types/lodash": "^4.14.186",

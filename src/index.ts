@@ -16,14 +16,22 @@ export const onPreBuild = ({
     };
   };
 }): void => {
+  console.log(netlifyConfig.functions.emails);
+
   netlifyConfig.functions.emails = {
     included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY as string}/**`],
-    external_node_modules: ["mjml-core", "uglify-js"],
     node_bundler: "esbuild",
+    //   This does not work
+    //   external_node_modules: ["uglify-js"],  };
   };
 
-  // netlifyConfig.build.environment.NETLIFY_EXPERIMENTAL_PROCESS_DYNAMIC_IMPORTS =
-  //   true;
+  // Neither does this, you have to specify it directly in the toml of the project itself. Seems like a bug.
+  // netlifyConfig.functions = {
+  //   ...netlifyConfig.functions,
+  //   // @ts-expect-error
+  //   external_node_modules: ["uglify-js"],
+  // };
+
   const functionDependencies = [
     "handlebars",
     "postmark",
@@ -31,7 +39,6 @@ export const onPreBuild = ({
     "form-data",
     "mailgun.js",
     "cheerio",
-    "mjml-core",
   ];
 
   console.log("Installing email function dependencies");

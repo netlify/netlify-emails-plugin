@@ -1,7 +1,7 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
-import mjml2html from "mjml-core";
+import mjml2html from "mjml";
 import mailer from "./mailer";
 import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
 
@@ -20,7 +20,7 @@ export const getEmailFromPath = (path: string): string | undefined => {
       }
       if (fileType === "mjml") {
         fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
-        return mjml2html(fileContents);
+        return mjml2html(fileContents).html;
       }
     }
   });
