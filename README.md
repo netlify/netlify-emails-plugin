@@ -65,7 +65,7 @@ Please note, this preview endpoint is not made available in production and is on
 
 ## Step 5: Triggering an Email
 
-With node-fetch:
+Dependent on where you would like to trigger an email being sent (on a subscribe or data request button click, when an event is triggered, etc.), add this snippet to your code that is reacting to that event.
 
 ```
  import fetch from 'node-fetch'
@@ -84,7 +84,7 @@ With node-fetch:
         bcc: "bcc@test.com",
         subject: "Welcome",
         parameters: {
-          products: ["product1", "product2", "product3"]
+          products: ["product1", "product2", "product3"],
           name: "Alexander",
         },
       }),
