@@ -44,7 +44,6 @@
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
-    "@netlify/build": "^27.1.4",
     "@netlify/eslint-config-node": "^6.0.0",
     "@types/jest": "^29.1.1",
     "@types/lodash": "^4.14.186",
