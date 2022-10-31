@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.20](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.19...v0.0.20) (2022-10-31)
+
+
+### Miscellaneous Chores
+
+* remove build package with vuln glob-parent version ([8c0a2a1](https://github.com/netlify/netlify-emails-plugin/commit/8c0a2a14bb301ab35ebd859005e12882da1a1d4a))
+
 ## [0.0.19](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.18...v0.0.19) (2022-10-31)
 
 
