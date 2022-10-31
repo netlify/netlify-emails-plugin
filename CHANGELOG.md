@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.19](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.18...v0.0.19) (2022-10-31)
+
+
+### Miscellaneous Chores
+
+* shortened readme with docs link ([e46ceff](https://github.com/netlify/netlify-emails-plugin/commit/e46ceff14065649e4433f86ffd614b47f103f029))
+
 ## [0.0.18](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.17...v0.0.18) (2022-10-21)
 
 
