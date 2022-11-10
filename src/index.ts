@@ -18,18 +18,18 @@ export const onPreBuild = ({
 }): void => {
   console.log(netlifyConfig.functions.emails);
 
+  if (
+    process.env.NETLIFY_EMAILS_DIRECTORY === undefined ||
+    process.env.NETLIFY_EMAILS_DIRECTORY === ""
+  ) {
+    throw new Error("NETLIFY_EMAILS_DIRECTORY must be set");
+  }
+
   netlifyConfig.functions.emails = {
-    included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY as string}/**`],
+    included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY}/**`],
     node_bundler: "esbuild",
     external_node_modules: ["uglify-js"],
   };
-
-  // Neither does this, you have to specify it directly in the toml of the project itself. Seems like a bug.
-  // netlifyConfig.functions = {
-  //   ...netlifyConfig.functions,
-  //   // @ts-expect-error
-  //   external_node_modules: ["uglify-js"],
-  // };
 
   const functionDependencies = [
     "handlebars",

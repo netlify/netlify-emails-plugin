@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.0.20](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.19...v0.0.20) (2022-10-31)
+
+
+### Miscellaneous Chores
+
+* remove build package with vuln glob-parent version ([8c0a2a1](https://github.com/netlify/netlify-emails-plugin/commit/8c0a2a14bb301ab35ebd859005e12882da1a1d4a))
+
+## [0.0.19](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.18...v0.0.19) (2022-10-31)
+
+
+### Miscellaneous Chores
+
+* shortened readme with docs link ([e46ceff](https://github.com/netlify/netlify-emails-plugin/commit/e46ceff14065649e4433f86ffd614b47f103f029))
+
+## [0.0.18](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.17...v0.0.18) (2022-10-21)
+
+
+### Features
+
+* add contributing md ([d37480f](https://github.com/netlify/netlify-emails-plugin/commit/d37480fbd3b5dfaa56f7884a8ba8a8c755a826a2))
+* readme w/ handlebar eg & config screenshots ([725023b](https://github.com/netlify/netlify-emails-plugin/commit/725023b31c3f41e4b6b12e19d6170352a1bf15a7))
+
 ## [0.0.17](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.16...v0.0.17) (2022-10-20)
 
 
