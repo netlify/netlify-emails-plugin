@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.21](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.20...v0.0.21) (2022-11-10)
+
+
+### Miscellaneous Chores
+
+* enforce email directory ([6089cfa](https://github.com/netlify/netlify-emails-plugin/commit/6089cfa703a4b4cd9969f244aa53e6b75543e0d2))
+
 ## [0.0.20](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.19...v0.0.20) (2022-10-31)
 
 
