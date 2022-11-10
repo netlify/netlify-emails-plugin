@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { mkdirSync, copyFileSync } from "fs";
+import fs from "fs";
 import { join } from "path";
 
 export const onPreBuild = ({
@@ -31,51 +31,45 @@ export const onPreBuild = ({
   console.log("Installed email function dependencies");
 
   const emailFunctionDirectory = join(
-    "./.netlify",
+    ".netlify",
     "functions-internal",
     "emails"
   );
 
-  mkdirSync(emailFunctionDirectory, {
+  fs.mkdirSync(emailFunctionDirectory, {
     recursive: true,
   });
-
-  mkdirSync(join(emailFunctionDirectory, "mailer"), {
+  fs.copyFileSync(
+    join(__dirname, "../src", "handler", "index.ts"),
+    join(emailFunctionDirectory, "index.ts")
+  );
+  fs.mkdirSync(join(emailFunctionDirectory, "mailer"), {
     recursive: true,
   });
-  mkdirSync(join(emailFunctionDirectory, "preview"), {
-    recursive: true,
-  });
-  mkdirSync(join(emailFunctionDirectory, "utils"), {
-    recursive: true,
-  });
-
-  copyFileSync(
+  fs.copyFileSync(
     join(__dirname, "../src", "handler", "mailer", "index.ts"),
     join(emailFunctionDirectory, "mailer", "index.ts")
   );
-
-  copyFileSync(
+  fs.mkdirSync(join(emailFunctionDirectory, "preview"), {
+    recursive: true,
+  });
+  fs.mkdirSync(join(emailFunctionDirectory, "utils"), {
+    recursive: true,
+  });
+  fs.copyFileSync(
     join(__dirname, "../src", "handler", "preview", "index.ts"),
     join(emailFunctionDirectory, "preview", "index.ts")
   );
-  copyFileSync(
+  fs.copyFileSync(
     join(__dirname, "../src", "handler", "preview", "preview.html"),
     join(emailFunctionDirectory, "preview", "preview.html")
   );
-  copyFileSync(
+  fs.copyFileSync(
     join(__dirname, "../src", "handler", "preview", "directory.html"),
     join(emailFunctionDirectory, "preview", "directory.html")
   );
-  copyFileSync(
+  fs.copyFileSync(
     join(__dirname, "../src", "handler", "utils", "handlebars.ts"),
     join(emailFunctionDirectory, "utils", "handlebars.ts")
-  );
-  console.log("src:", join(__dirname, "../src", "handler", "index.ts"));
-  console.log("dest", join(emailFunctionDirectory, "index.ts"));
-
-  copyFileSync(
-    join(__dirname, "../src", "handler", "index.ts"),
-    join(emailFunctionDirectory, "index.ts")
   );
 };
