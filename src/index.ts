@@ -19,9 +19,9 @@ export const onPreBuild = ({
   console.log(netlifyConfig.functions.emails);
 
   netlifyConfig.functions.emails = {
-    ...netlifyConfig.functions.emails,
     included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY as string}/**`],
     node_bundler: "esbuild",
+    external_node_modules: ["uglify-js"],
   };
 
   // Neither does this, you have to specify it directly in the toml of the project itself. Seems like a bug.
@@ -38,6 +38,7 @@ export const onPreBuild = ({
     "form-data",
     "mailgun.js",
     "cheerio",
+    "mjml",
   ];
 
   console.log("Installing email function dependencies");
@@ -48,12 +49,6 @@ export const onPreBuild = ({
     ".netlify",
     "functions-internal",
     "emails"
-  );
-
-  // This is the only way to get the preview UI to render, with the modules for MJML
-  fs.appendFileSync(
-    "netlify.toml",
-    '\n[functions.emails]\n  external_node_modules = ["uglify-js", "mjml-core"]'
   );
 
   fs.mkdirSync(emailFunctionDirectory, {
