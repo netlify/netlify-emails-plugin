@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.23](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.22...v0.0.23) (2022-11-15)
+
+
+### Miscellaneous Chores
+
+* better handling of faulty email routes ([23e7b31](https://github.com/netlify/netlify-emails-plugin/commit/23e7b31df9afa28e87907e04d6dd8934de08b892))
+
 ## [0.0.22](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.21...v0.0.22) (2022-11-15)
 
 
