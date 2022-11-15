@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.22](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.21...v0.0.22) (2022-11-15)
+
+
+### Miscellaneous Chores
+
+* better logging of email progress ([69ce674](https://github.com/netlify/netlify-emails-plugin/commit/69ce674978b9596323f589e06142711246032c0e))
+
 ## [0.0.21](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.20...v0.0.21) (2022-11-10)
 
 
