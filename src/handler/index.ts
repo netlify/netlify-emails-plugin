@@ -31,6 +31,7 @@ const handler: Handler = async (event, context) => {
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
 
   if (providerApiKey === undefined) {
+    console.log("An API key must be set for your email provider");
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -42,6 +43,7 @@ const handler: Handler = async (event, context) => {
   const providerName = process.env.NETLIFY_EMAILS_PROVIDER;
 
   if (providerName === undefined) {
+    console.log("An email API provider name must be set");
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -55,6 +57,9 @@ const handler: Handler = async (event, context) => {
 
   const emailPath = event.rawUrl.match(/emails\/([A-z-]*)[?]?/)?.[1];
   if (emailPath === undefined) {
+    console.log(
+      `No email path provided - email path received: ${event.rawUrl}`
+    );
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -87,6 +92,7 @@ const handler: Handler = async (event, context) => {
     process.env.NETLIFY_EMAILS_SECRET === undefined ||
     event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
   ) {
+    console.log("No secret provided or secret does not match");
     return {
       statusCode: 403,
       body: JSON.stringify({
@@ -107,6 +113,7 @@ const handler: Handler = async (event, context) => {
   const requestBody = JSON.parse(event.body);
 
   if (requestBody.from === undefined) {
+    console.log("From address is required");
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -115,6 +122,7 @@ const handler: Handler = async (event, context) => {
     };
   }
   if (requestBody.to === undefined) {
+    console.log("To address is required");
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -123,7 +131,29 @@ const handler: Handler = async (event, context) => {
     };
   }
   const fullEmailPath = `${emailTemplatesDirectory}/${emailPath}`;
+
+  const directoryExists = fs.existsSync(fullEmailPath);
+  if (!directoryExists) {
+    console.error(`Email directory does not exist: ${fullEmailPath}`);
+    return {
+      statusCode: 404,
+      body: JSON.stringify({
+        message: `Email path ${fullEmailPath} does not exist`,
+      }),
+    };
+  }
+
   const fileContents = getEmailFromPath(fullEmailPath);
+  if (fileContents === undefined) {
+    console.error(`No email file found in directory: ${fullEmailPath}`);
+    return {
+      statusCode: 404,
+      body: JSON.stringify({
+        message: `No email file found in directory: ${fullEmailPath}`,
+      }),
+    };
+  }
+
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
 
