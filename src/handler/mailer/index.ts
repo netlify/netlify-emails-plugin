@@ -104,7 +104,7 @@ const mailer = async ({
       }
     }
     if (emailProvider === "sendgrid") {
-      console.log("Sending email using Sendgrid...");
+      console.log("Sending email using SendGrid...");
       sendGrid.setApiKey(configuration.apiKey);
 
       try {
@@ -123,6 +123,9 @@ const mailer = async ({
     }
 
     if (errorMessage !== undefined) {
+      console.error(
+        `Failed to send email with ${emailProvider}: ${errorMessage}`
+      );
       return {
         statusCode: 500,
         body: JSON.stringify(
@@ -130,9 +133,10 @@ const mailer = async ({
         ),
       };
     }
+    console.log(`Email sent successfully using ${emailProvider}`);
     return {
       statusCode: 200,
-      body: JSON.stringify(`Email successfully sent with ${emailProvider}`),
+      body: JSON.stringify(`Email sent successfully using ${emailProvider}`),
     };
   }
 };

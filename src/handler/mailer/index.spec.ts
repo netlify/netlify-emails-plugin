@@ -46,7 +46,7 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"Email successfully sent with sendgrid"',
+        body: expect.stringContaining("Email sent successfully using sendgrid"),
         statusCode: 200,
       });
     });
@@ -65,7 +65,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"The email API provider sendgrid failed to process the request: 403 - some error message"',
+        body: expect.stringContaining(
+          "The email API provider sendgrid failed to process the request: 403 - some error message"
+        ),
         statusCode: 500,
       });
     });
@@ -86,7 +88,7 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"Email successfully sent with mailgun"',
+        body: expect.stringContaining("Email sent successfully using mailgun"),
         statusCode: 200,
       });
     });
@@ -101,7 +103,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"Domain should be specified when using Mailgun email API"',
+        body: expect.stringContaining(
+          "Domain should be specified when using Mailgun email API"
+        ),
         statusCode: 400,
       });
     });
@@ -121,7 +125,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"The email API provider mailgun failed to process the request: 403 - some error message"',
+        body: expect.stringContaining(
+          "The email API provider mailgun failed to process the request: 403 - some error message"
+        ),
         statusCode: 500,
       });
     });
@@ -141,7 +147,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"The email API provider mailgun failed to process the request: 403 - some error message"',
+        body: expect.stringContaining(
+          "The email API provider mailgun failed to process the request: 403 - some error message"
+        ),
         statusCode: 500,
       });
     });
@@ -157,7 +165,7 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"Email successfully sent with postmark"',
+        body: expect.stringContaining("Email sent successfully using postmark"),
         statusCode: 200,
       });
     });
@@ -173,7 +181,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"The email API provider postmark failed to process the request: 403 - Failed with status code: 123"',
+        body: expect.stringContaining(
+          "The email API provider postmark failed to process the request: 403 - Failed with status code: 123"
+        ),
         statusCode: 500,
       });
     });
@@ -186,7 +196,9 @@ describe("Mailer function", () => {
       });
 
       expect(result).toEqual({
-        body: '"The email API provider postmark failed to process the request: Some error"',
+        body: expect.stringContaining(
+          "The email API provider postmark failed to process the request: Some error"
+        ),
         statusCode: 500,
       });
     });
