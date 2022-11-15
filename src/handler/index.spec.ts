@@ -73,29 +73,6 @@ describe("Email handler", () => {
     process.env = OLD_ENV; // Restore old environment
   });
 
-  it("should reject request when no path provided", async () => {
-    const secret = "super-secret";
-    process.env.NETLIFY_EMAILS_SECRET = secret;
-    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
-
-    const response = await handler(
-      {
-        body: validEmailRequestBody,
-        headers: { "netlify-emails-secret": secret },
-        rawUrl: "http://localhost:8888/.netlify/functions/emails",
-        httpMethod: "POST",
-      } as unknown as Event,
-      {} as unknown as Context
-    );
-
-    expect(response).toEqual({
-      statusCode: 400,
-      body: expect.stringContaining("No email path provided"),
-    });
-  });
-
   it("should reject request when no provider API key provided", async () => {
     const secret = "super-secret";
     process.env.NETLIFY_EMAILS_SECRET = secret;
@@ -139,6 +116,57 @@ describe("Email handler", () => {
     expect(response).toEqual({
       statusCode: 400,
       body: expect.stringContaining("An email API provider name must be set"),
+    });
+  });
+
+  it("should return 404 when no email file found", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/error",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 404,
+      body: expect.stringContaining(
+        "No email file found in directory: ./fixtures/emails/error"
+      ),
+    });
+  });
+
+  it("should return 404 when email route not found", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl:
+          "http://localhost:8888/.netlify/functions/emails/does-not-exist",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 404,
+      body: expect.stringContaining(
+        "Email path ./fixtures/emails/does-not-exist does not exist"
+      ),
     });
   });
 
