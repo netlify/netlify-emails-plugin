@@ -352,7 +352,7 @@ describe("Email handler", () => {
 
       expect(response).toEqual({
         statusCode: 200,
-        body: expect.stringContaining("Email successfully sent with sendgrid"),
+        body: expect.stringContaining("Email sent successfully using sendgrid"),
       });
       expect(mockSendgridSend).toHaveBeenCalledWith({
         from: "somebody@test.com",
@@ -385,7 +385,7 @@ describe("Email handler", () => {
 
       expect(response).toEqual({
         statusCode: 200,
-        body: expect.stringContaining("Email successfully sent with mailgun"),
+        body: expect.stringContaining("Email sent successfully using mailgun"),
       });
       expect(mockMailgunCreate).toHaveBeenCalledWith("domain.com", {
         from: "somebody@test.com",
@@ -417,7 +417,7 @@ describe("Email handler", () => {
 
       expect(response).toEqual({
         statusCode: 200,
-        body: expect.stringContaining("Email successfully sent with postmark"),
+        body: expect.stringContaining("Email sent successfully using postmark"),
       });
       expect(mockPostmarkSendEmail).toHaveBeenCalledWith({
         From: "somebody@test.com",
