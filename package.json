@@ -21,6 +21,7 @@
     "node-fetch": "^3.2.10",
     "path": "^0.12.7",
     "postmark": "^3.0.14",
+    "toml": "^3.0.0",
     "tslib": "^2.4.0"
   },
   "scripts": {

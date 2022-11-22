@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import { join } from "path";
+import toml from "toml";
 
 export const onPreBuild = ({
   netlifyConfig,
@@ -40,6 +41,62 @@ export const onPreBuild = ({
     "cheerio",
     "mjml",
   ];
+
+  // If netlify.toml exists in root directory, then add external_node_modules to it
+  if (fs.existsSync("netlify.toml")) {
+    const netlifyToml = fs.readFileSync("netlify.toml", "utf8");
+    const parsedNetlifyToml = toml.parse(netlifyToml);
+
+    // If it doesn't have a functions key, then add it with emails as the key and the value being an object with external_node_modules as the key and uglify-js as the value
+    if (parsedNetlifyToml.functions === undefined) {
+      fs.appendFileSync(
+        "netlify.toml",
+        '[functions.emails]\n  external_node_modules = ["uglify-js"]'
+      );
+    }
+    // If the function.emails config doesn't have an external_node_modules key, then add it with uglify-js as the value in the line below functions.emails
+    else if (
+      parsedNetlifyToml.functions.emails.external_node_modules === undefined
+    ) {
+      const functionsEmailsIndex = netlifyToml.indexOf("[functions.emails]");
+      const functionsEmailsEndIndex = netlifyToml.indexOf(
+        "[functions.emails]",
+        functionsEmailsIndex + 1
+      );
+      let functionsEmailsConfig = netlifyToml.slice(
+        functionsEmailsIndex,
+
+        functionsEmailsEndIndex
+      );
+      functionsEmailsConfig += '\n  external_node_modules = ["uglify-js"]';
+
+      // Insert the functions.emails config into the netlify.toml file at the correct index
+      fs.appendFileSync("netlify.toml", functionsEmailsConfig);
+    }
+    // If the Toml has a external_node_modules key that doesn't include uglify-js, then replace that line in the toml and append uglify-js to the end
+    else if (
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      !parsedNetlifyToml.functions.emails.external_node_modules?.includes(
+        "uglify-js"
+      )
+    ) {
+      const stringifiedModules = (
+        parsedNetlifyToml.functions.emails.external_node_modules as string[]
+      ).map((module) => `"${module}"`);
+      stringifiedModules.push('"uglify-js"');
+
+      const externalNodeModules = stringifiedModules.join(", ");
+
+      // Replace the line in the toml with the new external_node_modules
+      fs.writeFileSync(
+        "netlify.toml",
+        netlifyToml.replace(
+          /external_node_modules = \[.*\]/,
+          `external_node_modules = [${externalNodeModules}]`
+        )
+      );
+    }
+  }
 
   console.log("Installing email function dependencies");
   execSync(`npm install ${functionDependencies.join(" ")} -D`);
