@@ -15,12 +15,12 @@ export const getEmailFromPath = (path: string): string | undefined => {
     const fileType = file.split(".").pop();
     const filename = file.replace(/^.*[\\/]/, "").split(".")[0];
     if (filename === "index") {
-      if (fileType === "html") {
-        fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
-      }
       if (fileType === "mjml") {
         fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
         return mjml2html(fileContents).html;
+      }
+      if (fileType === "html") {
+        fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
       }
     }
   });

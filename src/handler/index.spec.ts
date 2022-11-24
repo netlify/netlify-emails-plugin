@@ -223,6 +223,74 @@ describe("Email handler", () => {
     });
   });
 
+  it("should send email when .html template used", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/htmlTemplate",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 200,
+      body: expect.stringContaining("Email successfully sent with sendgrid"),
+    });
+    expect(mockSendgridSend).toHaveBeenCalledWith({
+      from: "somebody@test.com",
+      to: "someone@test.com",
+      cc: "cc@test.com",
+      bcc: "bcc@test.com",
+      subject: "Test Subject",
+      html: expect.stringContaining("Alexander Hamilton"),
+    });
+    expect(mockSendgridSend.mock.calls[0][0].html).toContain(
+      "This is the test HTML template"
+    );
+  });
+
+  it("should send email when .mjml template used", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/mjmlTemplate",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 200,
+      body: expect.stringContaining("Email successfully sent with sendgrid"),
+    });
+    expect(mockSendgridSend).toHaveBeenCalledWith({
+      from: "somebody@test.com",
+      to: "someone@test.com",
+      cc: "cc@test.com",
+      bcc: "bcc@test.com",
+      subject: "Test Subject",
+      html: expect.stringContaining("Alexander Hamilton"),
+    });
+    expect(mockSendgridSend.mock.calls[0][0].html).toContain(
+      "This is the test MJML template"
+    );
+  });
+
   describe("when calling the preview tool", () => {
     it("should render preview directory with available templates", async () => {
       process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
@@ -327,7 +395,7 @@ describe("Email handler", () => {
       expect(response).toEqual({
         statusCode: 400,
         body: expect.stringContaining(
-          "Template not found for './fixtures/emails/not-here'. A file called 'index.html' must exist within this folder."
+          "Template not found for './fixtures/emails/not-here'. A file called 'index.html' or 'index.mjml' must exist within this folder"
         ),
       });
     });
