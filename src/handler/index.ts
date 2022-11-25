@@ -169,6 +169,7 @@ const handler: Handler = async (event, context) => {
       cc: requestBody.cc,
       bcc: requestBody.bcc,
       subject: requestBody.subject ?? "",
+      attachments: requestBody.attachments,
       html: renderedTemplate,
     },
   });

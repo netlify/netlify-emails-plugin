@@ -15,6 +15,7 @@ export const onPreBuild = ({
   }
 
   netlifyConfig.functions.emails = {
+    ...netlifyConfig.functions.emails,
     included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY}/**`],
   };
   const functionDependencies = [

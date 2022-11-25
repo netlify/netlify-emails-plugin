@@ -3,6 +3,12 @@ import sendGrid from "@sendgrid/mail";
 import Mailgun from "mailgun.js";
 import formData from "form-data";
 
+interface IAttachment {
+  content: string;
+  filename: string;
+  type: string;
+}
+
 export interface IEmailRequest {
   from: string;
   to: string;
@@ -10,6 +16,7 @@ export interface IEmailRequest {
   html: string;
   cc?: string;
   bcc?: string;
+  attachments?: IAttachment[];
 }
 
 interface IEmailConfig {
@@ -71,6 +78,10 @@ const mailer = async ({
             html: request.html,
             cc: request.cc,
             bcc: request.bcc,
+            attachment: request.attachments?.map((attachment) => ({
+              data: attachment.content,
+              filename: attachment.filename,
+            })),
           }
         );
         if (result.status !== 200) {
@@ -93,6 +104,12 @@ const mailer = async ({
           HtmlBody: request.html,
           Cc: request.cc,
           Bcc: request.bcc,
+          Attachments: request.attachments?.map((attachment) => ({
+            Name: attachment.filename,
+            Content: attachment.content,
+            ContentType: attachment.type,
+            ContentID: attachment.filename,
+          })),
         });
 
         if (result.ErrorCode !== 0) {
@@ -115,6 +132,12 @@ const mailer = async ({
           html: request.html,
           cc: request.cc,
           bcc: request.bcc,
+          attachments: request.attachments?.map((attachment) => ({
+            content: attachment.content,
+            filename: attachment.filename,
+            type: attachment.type,
+            disposition: "attachment",
+          })),
         });
       } catch (e) {
         const error = e as { code: number; message: string };
