@@ -7,15 +7,10 @@ export const onPreBuild = ({
 }: {
   netlifyConfig: { functions: { [key: string]: { included_files: string[] } } };
 }): void => {
-  if (
-    process.env.NETLIFY_EMAILS_DIRECTORY === undefined ||
-    process.env.NETLIFY_EMAILS_DIRECTORY === ""
-  ) {
-    throw new Error("NETLIFY_EMAILS_DIRECTORY must be set");
-  }
+  const emailsDirectory = process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
   netlifyConfig.functions.emails = {
-    included_files: [`${process.env.NETLIFY_EMAILS_DIRECTORY}/**`],
+    included_files: [`${emailsDirectory}/**`],
   };
   const functionDependencies = [
     "handlebars",

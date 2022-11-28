@@ -193,6 +193,29 @@ describe("Email handler", () => {
     });
   });
 
+  it("should default to ./emails when no directory set", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = undefined;
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 404,
+      body: expect.stringContaining("./emails/confirm does not exist"),
+    });
+  });
+
   it("should reject request when no from address provided", async () => {
     const secret = "super-secret";
     process.env.NETLIFY_EMAILS_SECRET = secret;
