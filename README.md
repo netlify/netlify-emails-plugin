@@ -30,7 +30,7 @@ When enabling the plugin via Site Settings, you should add the required configur
 
 ## Step 3: Adding Templates
 
-Now that the setup is complete, you can create an email directory `./emails` or use a custom directory, as long as you define it in your Email Settings under ‘Template directory’.
+Now that the setup is complete, you can create an email directory `./emails` (default) or use a custom directory, as long as you define it in your Email Settings under ‘Template directory’.
 
 Each email template should be stored under a folder name that represents the route of your template and the email file should be named `index.html`. E.g. `./emails/welcome/index.html`.
 
