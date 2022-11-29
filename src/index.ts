@@ -9,13 +9,15 @@ export const onPreBuild = ({
 }): void => {
   const emailsDirectory = process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
-  netlifyConfig.functions.emails = {
-    ...netlifyConfig.functions.emails,
-    included_files: [
-      ...netlifyConfig.functions.emails.included_files,
-      `${emailsDirectory}/**`,
-    ],
-  };
+  if (netlifyConfig.functions?.emails?.included_files !== undefined) {
+    netlifyConfig.functions.emails.included_files.push(`${emailsDirectory}/**`);
+  } else {
+    netlifyConfig.functions.emails = {
+      ...netlifyConfig.functions.emails,
+      included_files: [`${emailsDirectory}/**`],
+    };
+  }
+
   const functionDependencies = [
     "handlebars",
     "postmark",
