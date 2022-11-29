@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.24](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.23...v0.0.24) (2022-11-28)
+
+
+### Miscellaneous Chores
+
+* make ./emails default directory ([25adc34](https://github.com/netlify/netlify-emails-plugin/commit/25adc341fb455c686c4103e2aa99df825fe30e87))
+
 ## [0.0.23](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.22...v0.0.23) (2022-11-15)
 
 
