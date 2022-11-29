@@ -2,7 +2,7 @@
 
 🚧 Note: This plugin is pre-release software. Until version 1.0.0 is released, its API could change at any time.
 
-The Netlify emails build plugin which is responsible for creating a serverless function to handle email requests, populating them with the provided templates and sending them using the specified email API provider.
+The Netlify emails build plugin is responsible for creating a serverless function to handle email requests, using the email request to populate provided email templates and sending them using the specified email API provider.
 
 ## Docs
 
