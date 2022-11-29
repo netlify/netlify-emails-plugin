@@ -10,7 +10,11 @@ export const onPreBuild = ({
   const emailsDirectory = process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
   netlifyConfig.functions.emails = {
-    included_files: [`${emailsDirectory}/**`],
+    ...netlifyConfig.functions.emails,
+    included_files: [
+      ...netlifyConfig.functions.emails.included_files,
+      `${emailsDirectory}/**`,
+    ],
   };
   const functionDependencies = [
     "handlebars",
