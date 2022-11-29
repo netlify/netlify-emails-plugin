@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.27](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.26...v0.0.27) (2022-11-29)
+
+
+### Miscellaneous Chores
+
+* handle included file not being defined ([04e8c09](https://github.com/netlify/netlify-emails-plugin/commit/04e8c09c69b8517ce6c303e1d5c25116f1239058))
+
 ## [0.0.26](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.25...v0.0.26) (2022-11-29)
 
 
