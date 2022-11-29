@@ -11,7 +11,10 @@ export const onPreBuild = ({
 
   netlifyConfig.functions.emails = {
     ...netlifyConfig.functions.emails,
-    included_files: [`${emailsDirectory}/**`],
+    included_files: [
+      ...netlifyConfig.functions.emails.included_files,
+      `${emailsDirectory}/**`,
+    ],
   };
   const functionDependencies = [
     "handlebars",
