@@ -65,7 +65,7 @@ const mailer = async ({
       const mailgunClient = mailgun.client({
         username: "api",
         key: configuration.apiKey,
-        url: "https://api.eu.mailgun.net",
+        // url: "https://api.eu.mailgun.net",
       });
 
       try {
@@ -78,10 +78,16 @@ const mailer = async ({
             html: request.html,
             cc: request.cc,
             bcc: request.bcc,
-            attachment: request.attachments?.map((attachment) => ({
-              data: attachment.content,
-              filename: attachment.filename,
-            })),
+            attachment: request.attachments?.map((attachment) => {
+              const attachmentBuffer = Buffer.from(
+                attachment.content,
+                "base64"
+              );
+              return {
+                data: attachmentBuffer,
+                filename: attachment.filename,
+              };
+            }),
           }
         );
         if (result.status !== 200) {
