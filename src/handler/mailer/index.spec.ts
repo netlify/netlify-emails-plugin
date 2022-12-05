@@ -72,7 +72,7 @@ describe("Mailer function", () => {
       });
     });
   });
-  describe("using mail gun", () => {
+  describe("using mailgun", () => {
     beforeEach(() => {
       mockMailgunCreate = () => ({ status: 200, message: "done" });
     });
@@ -104,7 +104,7 @@ describe("Mailer function", () => {
 
       expect(result).toEqual({
         body: expect.stringContaining(
-          "Domain should be specified when using Mailgun email API"
+          "NETLIFY_EMAILS_MAILGUN_DOMAIN should be specified when using Mailgun email API"
         ),
         statusCode: 400,
       });
