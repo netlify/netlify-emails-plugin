@@ -16,6 +16,7 @@ interface IEmailConfig {
   apiKey: string;
   providerName: string;
   mailgunDomain?: string;
+  mailgunHostRegion?: string;
 }
 
 interface IMailerProps {
@@ -49,16 +50,21 @@ const mailer = async ({
         return {
           statusCode: 400,
           body: JSON.stringify(
-            "Domain should be specified when using Mailgun email API"
+            "NETLIFY_EMAILS_MAILGUN_DOMAIN should be specified when using Mailgun email API"
           ),
         };
+      }
+      if (configuration.mailgunHostRegion === undefined) {
+        console.warn(
+          "NETLIFY_EMAILS_MAILGUN_HOST_REGION is not specified, using the default mailgun region which may not work for EU domains"
+        );
       }
 
       const mailgun = new Mailgun(formData);
       const mailgunClient = mailgun.client({
         username: "api",
         key: configuration.apiKey,
-        url: "https://api.eu.mailgun.net",
+        url: configuration.mailgunHostRegion,
       });
 
       try {
