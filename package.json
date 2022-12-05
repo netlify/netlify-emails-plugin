@@ -19,6 +19,9 @@
     "node-fetch": "^3.2.10",
     "path": "^0.12.7",
     "postmark": "^3.0.14",
+    "preact": "^10.11.3",
+    "preact-render-to-string": "^5.2.6",
+    "preact-router": "^4.1.0",
     "tslib": "^2.4.0"
   },
   "scripts": {

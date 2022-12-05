@@ -1,8 +1,9 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
+import { join } from "path";
 import mailer from "./mailer";
-import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
+import { emailDirectoryHandler } from "./preview";
 
 export const getEmailFromPath = (path: string): string | undefined => {
   let fileContents: string | undefined;
@@ -73,16 +74,35 @@ const handler: Handler = async (event, context) => {
   );
 
   if (emailPath === "_preview" && showEmailPreview) {
-    const previewPath = event.rawUrl.match(
-      /emails\/_preview\/([A-z-]*)[?]?/
-    )?.[1];
+    // Example url http://localhost:8888/.netlify/functions/emails/_preview/forgotten-password
+    // Get the path after _preview
+    const previewPath = event.rawUrl.match(/_preview\/([A-z-]*)[?]?/)?.[1];
+
+    // const previewPath = event.rawUrl.match(
+    //   /emails\/_preview\/([A-z-]*)[?]?/
+    // )?.[1];
+
+    console.log({ previewPath });
 
     if (previewPath !== undefined) {
-      return emailPreviewHandler(
-        previewPath,
-        emailTemplatesDirectory,
-        event.queryStringParameters
+      const emailPreviewHtml = fs.readFileSync(
+        join(
+          ".netlify",
+          "functions-internal",
+          "emails",
+          "preview",
+          "preview.html"
+        )
       );
+      return {
+        statusCode: 200,
+        body: emailPreviewHtml.toString(),
+      };
+      // return emailPreviewHandler(
+      //   previewPath,
+      //   emailTemplatesDirectory,
+      //   event.queryStringParameters
+      // );
     }
 
     return emailDirectoryHandler(emailTemplatesDirectory);

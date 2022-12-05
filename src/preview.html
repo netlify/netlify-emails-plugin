@@ -1,0 +1,145 @@
+<script
+  class="__netlify_emails_script"
+  src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"
+></script>
+<script class="__netlify_emails_script" type="module">
+  import { h, Component, render } from "https://unpkg.com/preact?module";
+  import htm from "https://unpkg.com/htm?module";
+
+  const getHBValues = (text) => {
+    const re = /{{{?(.*?)}?}}/g;
+    const tags = [];
+    let matches;
+
+    // eslint-disable-next-line no-extra-boolean-cast
+    while (Boolean((matches = re.exec(text)))) {
+      if (matches !== null) {
+        tags.push(matches[1]);
+      }
+    }
+    const root = {};
+    let context = root;
+    const stack = [];
+    const setVar = (variable, val) => {
+      // Dot Notation Breakdown
+      if (/\.+/.test(variable) && !/\s/.test(variable)) {
+        setByString(context, variable, "");
+      } else {
+        context[variable.trim()] = val;
+      }
+    };
+    tags.forEach((tag) => {
+      if (tag.startsWith("! ")) {
+        return;
+      }
+      if (tag === "else") {
+        return;
+      }
+      if ("#^".includes(tag[0]) && !tag.includes(" ")) {
+        setVar(tag.slice(1), true);
+        stack.push(context);
+        return;
+      }
+      if (tag.startsWith("#if")) {
+        const vars = tag.split(" ").slice(1);
+
+        vars.forEach((ivar) => {
+          setVar(ivar, true);
+        });
+        stack.push(context);
+        return;
+      }
+      if (tag.startsWith("/if")) {
+        context = stack.pop();
+        return;
+      }
+      if (tag.startsWith("#with ")) {
+        const splitTag = tag.split(" ");
+        const newContext = {};
+        context[splitTag[1]] = newContext;
+        stack.push(context);
+        context = newContext;
+        return;
+      }
+      if (tag.startsWith("/with")) {
+        context = stack.pop();
+        return;
+      }
+      if (tag.startsWith("#unless ")) {
+        const splitTag = tag.split(" ");
+        setVar(splitTag[1], true);
+        stack.push(context);
+        return;
+      }
+      if (tag.startsWith("/unless")) {
+        context = stack.pop();
+        return;
+      }
+      if (tag.startsWith("#each ")) {
+        const splitTag = tag.split(" ");
+        const newContext = {};
+        context[splitTag[1]] = [newContext];
+        stack.push(context);
+        context = newContext;
+        return;
+      }
+      if (tag.startsWith("/each")) {
+        context = stack.pop();
+        return;
+      }
+      if (tag.startsWith("/")) {
+        context = stack.pop();
+        return;
+      }
+      setVar(tag, "");
+    });
+
+    return root;
+  };
+
+  const newDocument = document;
+
+  newDocument.querySelectorAll(".__netlify_emails_script").forEach((script) => {
+    script.remove();
+  });
+  const template = newDocument.documentElement.outerHTML;
+
+  const handleBarTemplate = Handlebars.compile(template);
+  const renderedTemplate = handleBarTemplate({});
+
+  const hbValues = getHBValues(template);
+  const parameters = Object.keys(hbValues).map((key) => {
+    const value = hbValues[key];
+    if (Array.isArray(value)) {
+      return [key, "array"];
+    }
+
+    return [key, "string"];
+  });
+
+  document.body.replaceWith(document.createElement("body"));
+
+  console.log({ template });
+  // const template = "<html><h1>Name:{{name}}</h1></html>";
+
+  // Get last route of URL excluding query parameters
+  const route = window.location.pathname.split("/").pop().split("?")[0];
+
+  // const template = `
+  // __EMAIL_TEMPLATE__
+  // `;
+
+  // Initialize htm with Preact
+  const html = htm.bind(h);
+
+  function App(props) {
+    return html`<div>p:${parameters} t:${renderedTemplate}</div>`;
+  }
+
+  render(html`<${App} name="World" />`, document.body);
+</script>
+
+<html>
+  <h1>Name:{{name}}</h1>
+  <p>The above script will be placed above every html email template</p>
+</html>

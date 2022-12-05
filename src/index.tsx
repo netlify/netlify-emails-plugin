@@ -1,6 +1,8 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import { join } from "path";
+import { render } from "preact-render-to-string";
+import EmailDirectory from "./directory";
 
 export const onPreBuild = ({
   netlifyConfig,
@@ -61,13 +63,17 @@ export const onPreBuild = ({
     join(__dirname, "../src", "handler", "preview", "index.ts"),
     join(emailFunctionDirectory, "preview", "index.ts")
   );
-  fs.copyFileSync(
-    join(__dirname, "../src", "handler", "preview", "preview.html"),
-    join(emailFunctionDirectory, "preview", "preview.html")
+
+  fs.writeFileSync(
+    join(emailFunctionDirectory, "preview", "directory.html"),
+    render(<EmailDirectory />)
   );
+  fs.mkdirSync(join(emailFunctionDirectory, "preview"), {
+    recursive: true,
+  });
   fs.copyFileSync(
-    join(__dirname, "../src", "handler", "preview", "directory.html"),
-    join(emailFunctionDirectory, "preview", "directory.html")
+    join(__dirname, "../src", "preview.html"),
+    join(emailFunctionDirectory, "preview", "preview.html")
   );
   fs.copyFileSync(
     join(__dirname, "../src", "handler", "utils", "handlebars.ts"),

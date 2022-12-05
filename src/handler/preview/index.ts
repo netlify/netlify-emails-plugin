@@ -40,13 +40,7 @@ export const emailDirectoryHandler = (
     </li>`;
   });
   const previewHtml = fs.readFileSync(
-    join(
-      ".netlify",
-      "functions-internal",
-      "emails",
-      "preview",
-      "directory.html"
-    )
+    join(".netlify", "functions-internal", "emails", "preview", "preview.html")
   );
   const $ = cheerio.load(previewHtml.toString());
   $("#templateList").html(templateList);
