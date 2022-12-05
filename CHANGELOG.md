@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.28](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.27...v0.0.28) (2022-12-05)
+
+
+### Bug Fixes
+
+* handle mailgun host region ([ac06fbc](https://github.com/netlify/netlify-emails-plugin/commit/ac06fbce916f8bf73eafe700a735c5893be3752c))
+
 ## [0.0.27](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.26...v0.0.27) (2022-11-29)
 
 
