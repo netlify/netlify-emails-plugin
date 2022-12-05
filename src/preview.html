@@ -1,10 +1,34 @@
 <script
   class="__netlify_emails_script"
+  src="https://cdn.tailwindcss.com"
+></script>
+<script class="__netlify_emails_script">
+  function copySnippet() {
+    var r = document.createRange();
+    r.selectNode(document.getElementById("fetchSnippet"));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();
+  }
+</script>
+<script
+  class="__netlify_emails_script"
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"
+></script>
+<script class="__netlify_emails_script">
+  hljs.highlightAll();
+</script>
+<script
+  class="__netlify_emails_script"
   src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"
 ></script>
 <script class="__netlify_emails_script" type="module">
   import { h, Component, render } from "https://unpkg.com/preact?module";
   import htm from "https://unpkg.com/htm?module";
+
+  // Get last path from URL excluding query parameters
+  const path = window.location.pathname.split("/").pop().split("?")[0];
 
   const getHBValues = (text) => {
     const re = /{{{?(.*?)}?}}/g;
@@ -102,12 +126,23 @@
   newDocument.querySelectorAll(".__netlify_emails_script").forEach((script) => {
     script.remove();
   });
+  // Remove any style elements that contain text tailwindcss
+  newDocument.querySelectorAll("style").forEach((style) => {
+    if (style.innerText.includes("tailwindcss")) {
+      style.remove();
+    }
+  });
   const template = newDocument.documentElement.outerHTML;
 
+  const querySearch = new URLSearchParams(window.location.search);
+  const queryParams = Object.fromEntries(querySearch);
+  console.log({ queryParams });
+
   const handleBarTemplate = Handlebars.compile(template);
-  const renderedTemplate = handleBarTemplate({});
+  const renderedTemplate = handleBarTemplate(queryParams);
 
   const hbValues = getHBValues(template);
+
   const parameters = Object.keys(hbValues).map((key) => {
     const value = hbValues[key];
     if (Array.isArray(value)) {
@@ -116,27 +151,164 @@
 
     return [key, "string"];
   });
+  const fetchSnippet = `await fetch(
+  \`\${process.env.URL}/.netlify/functions/emails/${path}\`,
+  {
+    headers: {
+      "netlify-emails-secret": process.env.NETLIFY_EMAILS_SECRET,
+    },
+    method: "POST",
+    body: JSON.stringify({
+      from: "",
+      to: "",
+      subject: "",
+      parameters: {
+        ${parameters
+          .map((param) => {
+            if (param[1] === "array") {
+              return `${param[0]}: []`;
+            }
+            if (param[1] === "string") {
+              return `${param[0]}: ""`;
+            }
+            return "";
+          })
+          .join(", \n            ")}
+      },
+    }),
+  }
+);`;
 
   document.body.replaceWith(document.createElement("body"));
-
-  console.log({ template });
-  // const template = "<html><h1>Name:{{name}}</h1></html>";
 
   // Get last route of URL excluding query parameters
   const route = window.location.pathname.split("/").pop().split("?")[0];
 
-  // const template = `
-  // __EMAIL_TEMPLATE__
-  // `;
-
   // Initialize htm with Preact
   const html = htm.bind(h);
 
-  function App(props) {
-    return html`<div>p:${parameters} t:${renderedTemplate}</div>`;
-  }
+  const capitalizeFirstLetter = (string) =>
+    string.charAt(0).toUpperCase() + string.slice(1);
 
-  render(html`<${App} name="World" />`, document.body);
+  render(
+    html`<head>
+        <link
+          rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/monokai-sublime.min.css"
+        />
+      </head>
+      <title>Email Preview</title>
+      <body>
+        <div class="flex flex-row h-full">
+          <div class="flex flex-col p-7 text-white bg-[#1c2126] min-w-[240px]">
+            <a href="/" class="w-[100px] mb-10"
+              ><img
+                src="https://www.netlify.com/v3/img/components/full-logo-dark.png"
+                class="min-w-[100px]"
+              />
+            </a>
+            <div>
+              <ul id="templateList"></ul>
+            </div>
+          </div>
+          <div class="grow bg-white border-r-[1px] border-[#1c21261a]">
+            <div class="p-3 z-30 w-full sticky bg-white shadow shadow-gray">
+              Parameters
+            </div>
+            <div class="px-10 py-5 flex flex-col">
+              <div
+                class="max-w-[450px] bg-white border border-gray-300 rounded-lg shadow shadow-gray flex flex-col mt-6 min-w-full p-6"
+              >
+                <h2 class="text-l font-semibold">
+                  Preview emails with parameters
+                </h2>
+                <form
+                  method="get"
+                  id="parameterForm"
+                  class="flex flex-col text-gray-400"
+                >
+                  <ul id="parameterList" class="list-none p-0">
+                    ${parameters.map((param) => {
+                      if (param[1] === "array") {
+                        return html`
+                          <li>
+                            <div class="w-[100px] inline-block mt-2">
+                              ${capitalizeFirstLetter(param[0])}(array):
+                            </div>
+                            <input
+                              id="${param[0]}_array"
+                              name="${param[0]}_array"
+                              type="text"
+                              class="block border rounded border-gray-400 w-full px-4 py-2 text-black"
+                              placeholder="Enter comma separated values"
+                            />
+                          </li>
+                        `;
+                      }
+                      if (param[1] === "string") {
+                        return html`
+                          <li>
+                            <div class="w-[100px] inline-block mt-2">
+                              ${capitalizeFirstLetter(param[0])}:
+                            </div>
+                            <input
+                              id="${param[0]}"
+                              name="${param[0]}"
+                              type="text"
+                              class="block border rounded border-gray-400 w-full px-4 py-2 text-black"
+                            />
+                          </li>
+                        `;
+                      }
+                      return null;
+                    })}
+                  </ul>
+                  <button
+                    class="mt-2 px-4 py-2 bg-[#5cebdf] text-[#054861] rounded-md text-center hover:bg-[#9ff9e1]"
+                    type="submit"
+                  >
+                    Preview
+                  </button>
+                </form>
+              </div>
+
+              <div
+                class="max-w-[450px] bg-white border border-gray-300 rounded-lg shadow shadow-gray flex flex-col mt-6 min-w-full p-6"
+              >
+                <div class="flex flex-row justify-between items-center mb-2">
+                  <h2 class="text-l font-semibold">Fetch.js</h2>
+                  <button
+                    onclick="copySnippet()"
+                    class="px-4 py-2 bg-[#5cebdf] text-[#054861] rounded-md text-center hover:bg-[#9ff9e1]"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre class="h-[274px]">
+            <code
+              class="overflow-x-hidden h-[250px] language-js"
+              id="fetchSnippet"
+            >
+            ${fetchSnippet}
+            </code>
+          </pre>
+              </div>
+            </div>
+          </div>
+          <div class="grow-[3]">
+            <div class="p-3 z-30 w-full sticky bg-white shadow shadow-gray">
+              Preview
+            </div>
+            <iframe
+              id="emailPreview"
+              class="w-full border-none h-screen"
+              srcdoc="${renderedTemplate}"
+            />
+          </div>
+        </div>
+      </body>`,
+    document.body
+  );
 </script>
 
 <html>
