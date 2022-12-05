@@ -64,7 +64,10 @@ const mailer = async ({
       const mailgunClient = mailgun.client({
         username: "api",
         key: configuration.apiKey,
-        url: configuration.mailgunHostRegion,
+        url:
+          configuration.mailgunHostRegion?.toLowerCase() === "eu"
+            ? "https://api.eu.mailgun.net"
+            : undefined,
       });
 
       try {
