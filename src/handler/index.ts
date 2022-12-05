@@ -162,6 +162,7 @@ const handler: Handler = async (event, context) => {
       providerName,
       apiKey: providerApiKey,
       mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
+      mailgunHostRegion: process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION,
     },
     request: {
       from: requestBody.from,
