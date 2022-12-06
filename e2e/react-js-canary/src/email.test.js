@@ -4,7 +4,7 @@ describe("react-js canary", () => {
       `http://localhost:8888/.netlify/functions/emails/subscribed`,
       {
         headers: {
-          "netlify-emails-secret": "ccfc35be-fc07-4ca0-aab6-8feab5867057",
+          "netlify-emails-secret": "test",
           "Content-Type": "application/json",
           "canary-test": "true",
         },
