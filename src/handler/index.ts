@@ -90,6 +90,7 @@ const handler: Handler = async (event, context) => {
 
   if (
     process.env.NETLIFY_EMAILS_SECRET === undefined ||
+    process.env.NETLIFY_EMAILS_SECRET === "" ||
     event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
   ) {
     console.log("No secret provided or secret does not match");

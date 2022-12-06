@@ -73,6 +73,75 @@ describe("Email handler", () => {
     process.env = OLD_ENV; // Restore old environment
   });
 
+  it("should reject request when secret is empty string", async () => {
+    const secret = "";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 403,
+      body: expect.stringContaining("Request forbidden"),
+    });
+  });
+
+  it("should reject request when secret is empty undefined", async () => {
+    const secret = undefined;
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 403,
+      body: expect.stringContaining("Request forbidden"),
+    });
+  });
+
+  it("should reject request when secret does not match", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": "super-wrong" },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 403,
+      body: expect.stringContaining("Request forbidden"),
+    });
+  });
+
   it("should reject request when no provider API key provided", async () => {
     const secret = "super-secret";
     process.env.NETLIFY_EMAILS_SECRET = secret;
