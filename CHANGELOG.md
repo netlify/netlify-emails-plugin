@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.30](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.28...v0.0.30) (2022-12-06)
+
+
+### Miscellaneous Chores
+
+* build action ([a551d92](https://github.com/netlify/netlify-emails-plugin/commit/a551d920ad9075d088a4c506794572e627a00a31))
+
 ## [0.0.28](https://github.com/netlify/netlify-emails-plugin/compare/v0.0.27...v0.0.28) (2022-12-05)
 
 
