@@ -26,7 +26,11 @@ export const getEmailFromPath = (path: string): string | undefined => {
 const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
 
 const handler: Handler = async (event, context) => {
-  if (event.httpMethod === "OPTIONS") {
+  const isCanaryTest =
+    event.headers["canary-test"] === "true" ||
+    event.headers["access-control-request-headers"]?.includes("canary-test");
+
+  if (isCanaryTest === true && event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers: {
@@ -165,6 +169,19 @@ const handler: Handler = async (event, context) => {
 
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
+
+  if (isCanaryTest === true) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        `Email sent successfully using ${providerName} email API - CI Test`
+      ),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+      },
+    };
+  }
 
   const response = await mailer({
     configuration: {
