@@ -27,9 +27,26 @@ interface IMailerProps {
 const mailer = async ({
   configuration,
   request,
-}: IMailerProps): Promise<{ statusCode: number; body: string }> => {
+}: IMailerProps): Promise<{
+  statusCode: number;
+  body: string;
+  headers?: { [key: string]: string };
+}> => {
   const acceptedProviders = ["mailgun", "postmark", "sendgrid"];
   const emailProvider = configuration.providerName.toLowerCase();
+
+  if (process.env.NETLIFY_EMAILS_CANARY === "true") {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(
+        `Email sent successfully using ${emailProvider} email API - CI Test`
+      ),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+      },
+    };
+  }
 
   if (
     acceptedProviders.find(

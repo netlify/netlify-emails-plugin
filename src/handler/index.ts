@@ -26,6 +26,15 @@ export const getEmailFromPath = (path: string): string | undefined => {
 const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
 
 const handler: Handler = async (event, context) => {
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+      },
+    };
+  }
   console.log(`Email handler received email request from path ${event.rawUrl}`);
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
@@ -88,18 +97,18 @@ const handler: Handler = async (event, context) => {
     return emailDirectoryHandler(emailTemplatesDirectory);
   }
 
-  if (
-    process.env.NETLIFY_EMAILS_SECRET === undefined ||
-    event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
-  ) {
-    console.log("No secret provided or secret does not match");
-    return {
-      statusCode: 403,
-      body: JSON.stringify({
-        message: "Request forbidden",
-      }),
-    };
-  }
+  // if (
+  //   process.env.NETLIFY_EMAILS_SECRET === undefined ||
+  //   event.headers["netlify-emails-secret"] !== process.env.NETLIFY_EMAILS_SECRET
+  // ) {
+  //   console.log("No secret provided or secret does not match");
+  //   return {
+  //     statusCode: 403,
+  //     body: JSON.stringify({
+  //       message: "Request forbidden",
+  //     }),
+  //   };
+  // }
 
   if (event.body === null) {
     return {

@@ -1,0 +1,51 @@
+{
+  "name": "react-js-canary",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "start-server": "netlify build && netlify dev",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "send-email": "sh ./test.sh",
+    "e2e": "netlify build && yarn send-email",
+    "eject": "react-scripts eject",
+    "ci": "start-server-and-test start-server http://localhost:8888 test"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "cheerio": "^1.0.0-rc.12",
+    "form-data": "^4.0.0",
+    "handlebars": "^4.7.7",
+    "mailgun.js": "^8.0.6",
+    "postmark": "^3.0.14",
+    "start-server-and-test": "^1.15.0"
+  }
+}
