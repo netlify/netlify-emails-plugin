@@ -1,7 +1,6 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
-import mailer from "./mailer";
 import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
 
 export const getEmailFromPath = (path: string): string | undefined => {
@@ -25,7 +24,7 @@ export const getEmailFromPath = (path: string): string | undefined => {
 
 const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event) => {
   console.log(`Email handler received email request from path ${event.rawUrl}`);
 
   const providerApiKey = process.env.NETLIFY_EMAILS_PROVIDER_API_KEY;
@@ -157,24 +156,35 @@ const handler: Handler = async (event, context) => {
   const template = Handlebars.compile(fileContents);
   const renderedTemplate = template(requestBody.parameters);
 
-  const response = await mailer({
-    configuration: {
-      providerName,
-      apiKey: providerApiKey,
-      mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
-      mailgunHostRegion: process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION,
-    },
-    request: {
-      from: requestBody.from,
-      to: requestBody.to,
-      cc: requestBody.cc,
-      bcc: requestBody.bcc,
-      subject: requestBody.subject ?? "",
-      html: renderedTemplate,
-    },
-  });
+  const response = await fetch(
+    "https://app.netlify.com/integrations/emails/send",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        configuration: {
+          providerName,
+          apiKey: providerApiKey,
+          mailgunDomain: process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN,
+          mailgunHostRegion: process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION,
+        },
+        request: {
+          from: requestBody.from,
+          to: requestBody.to,
+          cc: requestBody.cc,
+          bcc: requestBody.bcc,
+          subject: requestBody.subject ?? "",
+          html: renderedTemplate,
+        },
+      }),
+    }
+  );
 
-  return response;
+  return {
+    statusCode: response.status,
+    body: JSON.stringify({
+      message: response.statusText,
+    }),
+  };
 };
 
 export { handler };
