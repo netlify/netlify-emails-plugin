@@ -179,7 +179,7 @@ const handler: Handler = async (event) => {
   const renderedTemplate = template(requestBody.parameters);
 
   const response = await fetch(
-    "https://app.netlify.com/integrations/emails/send",
+    "https://test-netlify-integration-emails.netlify.app/.netlify/functions/send",
     {
       method: "POST",
       headers: {
@@ -199,6 +199,7 @@ const handler: Handler = async (event) => {
           bcc: requestBody.bcc,
           subject: requestBody.subject ?? "",
           html: renderedTemplate,
+          attachments: requestBody.attachments,
         },
       }),
     }
