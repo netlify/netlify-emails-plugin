@@ -31,6 +31,7 @@ const validEmailRequestBody = JSON.stringify({
   subject: "Test Subject",
   cc: "cc@test.com",
   bcc: "bcc@test.com",
+  attachments: ["base64-encoded-file", "base64-encoded-file"],
   parameters: {
     name: "Alexander Hamilton",
   },
@@ -49,7 +50,7 @@ describe("Email handler", () => {
     sendEmailHeaders = undefined;
     server.use(
       rest.post(
-        "https://app.netlify.com/integrations/emails/send",
+        "https://test-netlify-integration-emails.netlify.app/.netlify/functions/send",
         async (req, res, ctx) => {
           sendEmailRequest = await req.json();
           sendEmailHeaders = req.headers.all();
@@ -97,6 +98,7 @@ describe("Email handler", () => {
       cc: "cc@test.com",
       bcc: "bcc@test.com",
       subject: "Test Subject",
+      attachments: ["base64-encoded-file", "base64-encoded-file"],
       html: expect.stringContaining("Alexander Hamilton"),
     });
     expect(sendEmailRequest?.configuration).toEqual({
@@ -110,7 +112,7 @@ describe("Email handler", () => {
   it("should send email request and handle error", async () => {
     server.use(
       rest.post(
-        "https://app.netlify.com/integrations/emails/send",
+        "https://test-netlify-integration-emails.netlify.app/.netlify/functions/send",
         async (req, res, ctx) => {
           return await res(ctx.status(400), ctx.text("Error sending email"));
         }
