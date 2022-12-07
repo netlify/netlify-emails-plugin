@@ -18,14 +18,7 @@ export const onPreBuild = ({
     };
   }
 
-  const functionDependencies = [
-    "handlebars",
-    "postmark",
-    "@sendgrid/mail",
-    "form-data",
-    "mailgun.js",
-    "cheerio",
-  ];
+  const functionDependencies = ["handlebars", "cheerio", "node-fetch@2"];
 
   console.log("Installing email function dependencies");
   execSync(`npm install ${functionDependencies.join(" ")} -D`);
@@ -43,13 +36,6 @@ export const onPreBuild = ({
   fs.copyFileSync(
     join(__dirname, "../src", "handler", "index.ts"),
     join(emailFunctionDirectory, "index.ts")
-  );
-  fs.mkdirSync(join(emailFunctionDirectory, "mailer"), {
-    recursive: true,
-  });
-  fs.copyFileSync(
-    join(__dirname, "../src", "handler", "mailer", "index.ts"),
-    join(emailFunctionDirectory, "mailer", "index.ts")
   );
   fs.mkdirSync(join(emailFunctionDirectory, "preview"), {
     recursive: true,
