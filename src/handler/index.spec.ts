@@ -1,32 +1,10 @@
 import { Context } from "@netlify/functions/dist/function/context";
 import { Event } from "@netlify/functions/dist/function/event";
 import { Response } from "@netlify/functions/dist/function/response";
+import { rest } from "msw";
 import { cwd } from "process";
-import { handler } from ".";
-
-const mockSendgridSend = jest.fn();
-const mockMailgunCreate = jest.fn(() => ({ status: 200, message: "done" }));
-const mockPostmarkSendEmail = jest.fn(() => ({ ErrorCode: 0 }));
-
-jest.mock("@sendgrid/mail", () => ({
-  __esModule: true,
-  default: {
-    send: (args: any) => mockSendgridSend(args),
-    setApiKey: jest.fn(),
-  },
-}));
-
-jest.mock("mailgun.js", () =>
-  jest.fn().mockImplementation(() => ({
-    client: () => ({ messages: { create: mockMailgunCreate } }),
-  }))
-);
-
-jest.mock("postmark", () => ({
-  ServerClient: jest
-    .fn()
-    .mockImplementation(() => ({ sendEmail: mockPostmarkSendEmail })),
-}));
+import { handler, IMailRequest } from ".";
+import { server } from "../mocks/server";
 
 jest.mock("fs", () => ({
   ...jest.requireActual("fs"),
@@ -58,19 +36,99 @@ const validEmailRequestBody = JSON.stringify({
   },
 });
 
+let sendEmailRequest: undefined | IMailRequest;
+
 describe("Email handler", () => {
   const OLD_ENV = process.env;
 
   beforeEach(() => {
-    jest.resetModules(); // Most important - it clears the cache
-    process.env = { ...OLD_ENV }; // Make a copy
-    mockSendgridSend.mockClear();
-    mockPostmarkSendEmail.mockClear();
-    mockMailgunCreate.mockClear();
+    jest.resetModules();
+    process.env = { ...OLD_ENV };
+    sendEmailRequest = undefined;
+    server.use(
+      rest.post(
+        "https://app.netlify.com/integrations/emails/send",
+        async (req, res, ctx) => {
+          sendEmailRequest = await req.json();
+          return await res(ctx.text("Email sent successfully"));
+        }
+      )
+    );
   });
 
   afterAll(() => {
-    process.env = OLD_ENV; // Restore old environment
+    process.env = OLD_ENV;
+  });
+
+  it("should send email and return 200", async () => {
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "mailgun";
+    process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN = "test.com";
+    process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION = "us";
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 200,
+      body: expect.stringContaining("Email sent successfully"),
+    });
+    expect(sendEmailRequest?.request).toEqual({
+      from: "somebody@test.com",
+      to: "someone@test.com",
+      cc: "cc@test.com",
+      bcc: "bcc@test.com",
+      subject: "Test Subject",
+      html: expect.stringContaining("Alexander Hamilton"),
+    });
+    expect(sendEmailRequest?.configuration).toEqual({
+      apiKey: "some-key",
+      providerName: "mailgun",
+      mailgunDomain: "test.com",
+      mailgunHostRegion: "us",
+    });
+  });
+
+  it("should send email request and handle error", async () => {
+    server.use(
+      rest.post(
+        "https://app.netlify.com/integrations/emails/send",
+        async (req, res, ctx) => {
+          return await res(ctx.status(400), ctx.text("Error sending email"));
+        }
+      )
+    );
+
+    const secret = "super-secret";
+    process.env.NETLIFY_EMAILS_SECRET = secret;
+    process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
+    process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
+    process.env.NETLIFY_EMAILS_PROVIDER = "mailgun";
+    process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN = "test.com";
+    process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION = "us";
+    const response = await handler(
+      {
+        body: validEmailRequestBody,
+        headers: { "netlify-emails-secret": secret },
+        rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
+        httpMethod: "POST",
+      } as unknown as Event,
+      {} as unknown as Context
+    );
+
+    expect(response).toEqual({
+      statusCode: 400,
+      body: expect.stringContaining("Error sending email"),
+    });
   });
 
   it("should reject request when no provider API key provided", async () => {
@@ -380,103 +438,6 @@ describe("Email handler", () => {
         body: expect.stringContaining(
           "Template not found for './fixtures/emails/not-here'. A file called 'index.html' must exist within this folder."
         ),
-      });
-    });
-  });
-
-  describe("when using SendGrid", () => {
-    it("should send email and return 200", async () => {
-      const secret = "super-secret";
-      process.env.NETLIFY_EMAILS_SECRET = secret;
-      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-      process.env.NETLIFY_EMAILS_PROVIDER = "sendgrid";
-      const response = await handler(
-        {
-          body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
-          rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
-          httpMethod: "POST",
-        } as unknown as Event,
-        {} as unknown as Context
-      );
-
-      expect(response).toEqual({
-        statusCode: 200,
-        body: expect.stringContaining("Email sent successfully using sendgrid"),
-      });
-      expect(mockSendgridSend).toHaveBeenCalledWith({
-        from: "somebody@test.com",
-        to: "someone@test.com",
-        cc: "cc@test.com",
-        bcc: "bcc@test.com",
-        subject: "Test Subject",
-        html: expect.stringContaining("Alexander Hamilton"),
-      });
-    });
-  });
-
-  describe("when using Mailgun", () => {
-    it("should send email and return 200", async () => {
-      const secret = "super-secret";
-      process.env.NETLIFY_EMAILS_SECRET = secret;
-      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-      process.env.NETLIFY_EMAILS_PROVIDER = "mailgun";
-      process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN = "domain.com";
-      const response = await handler(
-        {
-          body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
-          rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
-          httpMethod: "POST",
-        } as unknown as Event,
-        {} as unknown as Context
-      );
-
-      expect(response).toEqual({
-        statusCode: 200,
-        body: expect.stringContaining("Email sent successfully using mailgun"),
-      });
-      expect(mockMailgunCreate).toHaveBeenCalledWith("domain.com", {
-        from: "somebody@test.com",
-        to: "someone@test.com",
-        cc: "cc@test.com",
-        bcc: "bcc@test.com",
-        subject: "Test Subject",
-        html: expect.stringContaining("Alexander Hamilton"),
-      });
-    });
-  });
-
-  describe("when using Postmark", () => {
-    it("should send email and return 200", async () => {
-      const secret = "super-secret";
-      process.env.NETLIFY_EMAILS_SECRET = secret;
-      process.env.NETLIFY_EMAILS_DIRECTORY = "./fixtures/emails";
-      process.env.NETLIFY_EMAILS_PROVIDER_API_KEY = "some-key";
-      process.env.NETLIFY_EMAILS_PROVIDER = "postmark";
-      const response = await handler(
-        {
-          body: validEmailRequestBody,
-          headers: { "netlify-emails-secret": secret },
-          rawUrl: "http://localhost:8888/.netlify/functions/emails/confirm",
-          httpMethod: "POST",
-        } as unknown as Event,
-        {} as unknown as Context
-      );
-
-      expect(response).toEqual({
-        statusCode: 200,
-        body: expect.stringContaining("Email sent successfully using postmark"),
-      });
-      expect(mockPostmarkSendEmail).toHaveBeenCalledWith({
-        From: "somebody@test.com",
-        To: "someone@test.com",
-        Cc: "cc@test.com",
-        Bcc: "bcc@test.com",
-        Subject: "Test Subject",
-        HtmlBody: expect.stringContaining("Alexander Hamilton"),
       });
     });
   });

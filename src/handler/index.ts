@@ -1,6 +1,7 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
+import fetch from "node-fetch";
 import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
 
 export const getEmailFromPath = (path: string): string | undefined => {
@@ -21,6 +22,27 @@ export const getEmailFromPath = (path: string): string | undefined => {
 
   return fileContents;
 };
+
+export interface IEmailRequest {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+  cc?: string;
+  bcc?: string;
+}
+
+interface IEmailConfig {
+  apiKey: string;
+  providerName: string;
+  mailgunDomain?: string;
+  mailgunHostRegion?: string;
+}
+
+export interface IMailRequest {
+  configuration: IEmailConfig;
+  request: IEmailRequest;
+}
 
 const allowedPreviewEnvironments = ["deploy-preview", "branch-deploy", "dev"];
 
@@ -179,10 +201,12 @@ const handler: Handler = async (event) => {
     }
   );
 
+  const responseText = await response.text();
+
   return {
     statusCode: response.status,
     body: JSON.stringify({
-      message: response.statusText,
+      message: responseText,
     }),
   };
 };
