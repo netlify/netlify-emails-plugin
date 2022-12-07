@@ -182,6 +182,9 @@ const handler: Handler = async (event) => {
     "https://app.netlify.com/integrations/emails/send",
     {
       method: "POST",
+      headers: {
+        "site-id": process.env.SITE_ID as string,
+      },
       body: JSON.stringify({
         configuration: {
           providerName,

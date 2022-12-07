@@ -37,6 +37,7 @@ const validEmailRequestBody = JSON.stringify({
 });
 
 let sendEmailRequest: undefined | IMailRequest;
+let sendEmailHeaders: undefined | Record<string, string>;
 
 describe("Email handler", () => {
   const OLD_ENV = process.env;
@@ -45,11 +46,13 @@ describe("Email handler", () => {
     jest.resetModules();
     process.env = { ...OLD_ENV };
     sendEmailRequest = undefined;
+    sendEmailHeaders = undefined;
     server.use(
       rest.post(
         "https://app.netlify.com/integrations/emails/send",
         async (req, res, ctx) => {
           sendEmailRequest = await req.json();
+          sendEmailHeaders = req.headers.all();
           return await res(ctx.text("Email sent successfully"));
         }
       )
@@ -68,6 +71,7 @@ describe("Email handler", () => {
     process.env.NETLIFY_EMAILS_PROVIDER = "mailgun";
     process.env.NETLIFY_EMAILS_MAILGUN_DOMAIN = "test.com";
     process.env.NETLIFY_EMAILS_MAILGUN_HOST_REGION = "us";
+    process.env.SITE_ID = "some-site-id";
     const response = await handler(
       {
         body: validEmailRequestBody,
@@ -82,6 +86,11 @@ describe("Email handler", () => {
       statusCode: 200,
       body: expect.stringContaining("Email sent successfully"),
     });
+    expect(sendEmailHeaders).toEqual(
+      expect.objectContaining({
+        "site-id": "some-site-id",
+      })
+    );
     expect(sendEmailRequest?.request).toEqual({
       from: "somebody@test.com",
       to: "someone@test.com",
