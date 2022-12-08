@@ -18,7 +18,7 @@ export const onPreBuild = ({
     };
   }
 
-  const functionDependencies = ["handlebars", "cheerio", "node-fetch@2"];
+  const functionDependencies = ["node-fetch@2"];
 
   console.log("Installing email function dependencies");
   execSync(`npm install ${functionDependencies.join(" ")} -D`);
@@ -44,19 +44,11 @@ export const onPreBuild = ({
     recursive: true,
   });
   fs.copyFileSync(
-    join(__dirname, "../src", "handler", "preview", "index.ts"),
-    join(emailFunctionDirectory, "preview", "index.ts")
-  );
-  fs.copyFileSync(
     join(__dirname, "../src", "handler", "preview", "preview.html"),
     join(emailFunctionDirectory, "preview", "preview.html")
   );
   fs.copyFileSync(
     join(__dirname, "../src", "handler", "preview", "directory.html"),
     join(emailFunctionDirectory, "preview", "directory.html")
-  );
-  fs.copyFileSync(
-    join(__dirname, "../src", "handler", "utils", "handlebars.ts"),
-    join(emailFunctionDirectory, "utils", "handlebars.ts")
   );
 };

@@ -2,25 +2,28 @@ import { Handler } from "@netlify/functions";
 import fs from "fs";
 import Handlebars from "handlebars";
 import fetch from "node-fetch";
-import { emailDirectoryHandler, emailPreviewHandler } from "./preview";
+import { join } from "path";
 
-export const getEmailFromPath = (path: string): string | undefined => {
-  let fileContents: string | undefined;
+export const getEmailFromPath = (
+  path: string
+): { file: string; type: string } | undefined => {
+  let fileFound: { file: string; type: string } | undefined;
   fs.readdirSync(path).forEach((file) => {
-    if (fileContents !== undefined) {
+    if (fileFound !== undefined) {
       // break after getting first file
       return;
     }
     const fileType = file.split(".").pop();
     const filename = file.replace(/^.*[\\/]/, "").split(".")[0];
     if (filename === "index") {
-      if (fileType === "html") {
-        fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
+      if (fileType === "mjml" || fileType === "html") {
+        const fileContents = fs.readFileSync(`${path}/${file}`, "utf8");
+        fileFound = { file: fileContents, type: fileType };
       }
     }
   });
 
-  return fileContents;
+  return fileFound;
 };
 
 export interface IEmailRequest {
@@ -99,14 +102,105 @@ const handler: Handler = async (event) => {
     )?.[1];
 
     if (previewPath !== undefined) {
-      return emailPreviewHandler(
-        previewPath,
-        emailTemplatesDirectory,
-        event.queryStringParameters
+      // Return error if preview path is not a valid email path
+      if (!fs.existsSync(join(emailTemplatesDirectory, previewPath))) {
+        console.log(
+          `Preview path is not a valid email path - preview path received: ${previewPath}`
+        );
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `Preview path is not a valid email path - preview path received: ${previewPath}`,
+          }),
+        };
+      }
+
+      const validEmailPaths: string[] = [];
+
+      const emailTemplate = getEmailFromPath(
+        join(emailTemplatesDirectory, previewPath)
       );
+
+      // If no email template found, return error
+      if (emailTemplate === undefined) {
+        console.log(
+          `No email template found for preview path - preview path received: ${previewPath}. Please ensure that an index.mjml or index.html file exists in the email template folder.`
+        );
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `No email template found for preview path - preview path received: ${previewPath}`,
+          }),
+        };
+      }
+
+      // Query parameters as object
+      const queryParams = event.queryStringParameters;
+
+      const renderResponse = await fetch(
+        "https://netlify-integration-emails.netlify.app/.netlify/functions/render?showParamaterDictionary=true",
+        {
+          method: "POST",
+          headers: {
+            "site-id": process.env.SITE_ID as string,
+          },
+          body: JSON.stringify({
+            template: emailTemplate.file,
+            type: emailTemplate.type,
+            parameters: queryParams,
+          }),
+        }
+      );
+
+      const renderResponseJson = (await renderResponse.json()) as {
+        html: string;
+        parameterDictionary: string;
+      };
+
+      fs.readdirSync(emailTemplatesDirectory).forEach((template) => {
+        // If index.html or index.mjml exists inside template folder, add to validEmailPaths
+        if (
+          fs.existsSync(
+            join(emailTemplatesDirectory, template, "index.html")
+          ) ||
+          fs.existsSync(join(emailTemplatesDirectory, template, "index.mjml"))
+        ) {
+          validEmailPaths.push(template);
+        }
+      });
+
+      const emailPreviewResponse = await fetch(
+        "https://netlify-integration-emails.netlify.app/.netlify/functions/preview",
+        {
+          method: "POST",
+          headers: {
+            "site-id": process.env.SITE_ID as string,
+          },
+          body: JSON.stringify({
+            name: previewPath,
+            renderedTemplate: renderResponseJson.html,
+            templates: validEmailPaths,
+            parametersDictionary: renderResponseJson.parameterDictionary,
+          }),
+        }
+      );
+
+      const emailPreviewResponseJson = (await emailPreviewResponse.json()) as {
+        html: string;
+      };
+
+      return {
+        statusCode: 200,
+        body: emailPreviewResponseJson.html,
+      };
     }
 
-    return emailDirectoryHandler(emailTemplatesDirectory);
+    return {
+      statusCode: 404,
+      body: JSON.stringify({
+        message: "TODO ",
+      }),
+    };
   }
 
   if (
