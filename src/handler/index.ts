@@ -79,56 +79,41 @@ const handler: Handler = async (event) => {
     process.env.NETLIFY_EMAILS_DIRECTORY ?? "./emails";
 
   const emailPath = event.rawUrl.match(/emails\/([A-z-]*)[?]?/)?.[1];
-  if (emailPath === undefined) {
-    console.log(
-      `No email path provided - email path received: ${event.rawUrl}`
-    );
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: `No email path provided - email path received: ${event.rawUrl}`,
-      }),
-    };
-  }
 
   const showEmailPreview = allowedPreviewEnvironments.includes(
     process.env.CONTEXT as string
   );
 
-  if (showEmailPreview) {
-    const previewPath = event.rawUrl.match(
-      /emails\/_preview\/([A-z-]*)[?]?/
-    )?.[1];
-
+  if (event.httpMethod === "GET" && showEmailPreview) {
     let emailTemplate: { file: string; type: string } | undefined;
 
-    if (previewPath !== undefined) {
+    if (emailPath !== undefined) {
       // Return error if preview path is not a valid email path
-      if (!fs.existsSync(join(emailTemplatesDirectory, previewPath))) {
+      if (!fs.existsSync(join(emailTemplatesDirectory, emailPath))) {
         console.log(
-          `Preview path is not a valid email path - preview path received: ${previewPath}`
+          `Preview path is not a valid email path - preview path received: ${emailPath}`
         );
         return {
           statusCode: 400,
           body: JSON.stringify({
-            message: `Preview path is not a valid email path - preview path received: ${previewPath}`,
+            message: `Preview path is not a valid email path - preview path received: ${emailPath}`,
           }),
         };
       }
 
       emailTemplate = getEmailFromPath(
-        join(emailTemplatesDirectory, previewPath)
+        join(emailTemplatesDirectory, emailPath)
       );
 
       // If no email template found, return error
       if (emailTemplate === undefined) {
         console.log(
-          `No email template found for preview path - preview path received: ${previewPath}. Please ensure that an index.mjml or index.html file exists in the email template folder.`
+          `No email template found for preview path - preview path received: ${emailPath}. Please ensure that an index.mjml or index.html file exists in the email template folder.`
         );
         return {
           statusCode: 400,
           body: JSON.stringify({
-            message: `No email template found for preview path - preview path received: ${previewPath}`,
+            message: `No email template found for preview path - preview path received: ${emailPath}`,
           }),
         };
       }
@@ -215,6 +200,17 @@ const handler: Handler = async (event) => {
       }),
     };
   }
+
+  if (emailPath === undefined) {
+    console.error(`Email path is undefined`);
+    return {
+      statusCode: 404,
+      body: JSON.stringify({
+        message: `Email path is undefined`,
+      }),
+    };
+  }
+
   const fullEmailPath = `${emailTemplatesDirectory}/${emailPath}`;
 
   const directoryExists = fs.existsSync(fullEmailPath);
