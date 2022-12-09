@@ -1,6 +1,5 @@
 import { Handler } from "@netlify/functions";
 import fs from "fs";
-import Handlebars from "handlebars";
 import fetch from "node-fetch";
 import { join } from "path";
 
@@ -96,10 +95,12 @@ const handler: Handler = async (event) => {
     process.env.CONTEXT as string
   );
 
-  if (emailPath === "_preview" && showEmailPreview) {
+  if (showEmailPreview) {
     const previewPath = event.rawUrl.match(
       /emails\/_preview\/([A-z-]*)[?]?/
     )?.[1];
+
+    let emailTemplate: { file: string; type: string } | undefined;
 
     if (previewPath !== undefined) {
       // Return error if preview path is not a valid email path
@@ -115,9 +116,7 @@ const handler: Handler = async (event) => {
         };
       }
 
-      const validEmailPaths: string[] = [];
-
-      const emailTemplate = getEmailFromPath(
+      emailTemplate = getEmailFromPath(
         join(emailTemplatesDirectory, previewPath)
       );
 
@@ -133,73 +132,44 @@ const handler: Handler = async (event) => {
           }),
         };
       }
-
-      // Query parameters as object
-      const queryParams = event.queryStringParameters;
-
-      const renderResponse = await fetch(
-        "https://netlify-integration-emails.netlify.app/.netlify/functions/render?showParamaterDictionary=true",
-        {
-          method: "POST",
-          headers: {
-            "site-id": process.env.SITE_ID as string,
-          },
-          body: JSON.stringify({
-            template: emailTemplate.file,
-            type: emailTemplate.type,
-            parameters: queryParams,
-          }),
-        }
-      );
-
-      const renderResponseJson = (await renderResponse.json()) as {
-        html: string;
-        parameterDictionary: string;
-      };
-
-      fs.readdirSync(emailTemplatesDirectory).forEach((template) => {
-        // If index.html or index.mjml exists inside template folder, add to validEmailPaths
-        if (
-          fs.existsSync(
-            join(emailTemplatesDirectory, template, "index.html")
-          ) ||
-          fs.existsSync(join(emailTemplatesDirectory, template, "index.mjml"))
-        ) {
-          validEmailPaths.push(template);
-        }
-      });
-
-      const emailPreviewResponse = await fetch(
-        "https://netlify-integration-emails.netlify.app/.netlify/functions/preview",
-        {
-          method: "POST",
-          headers: {
-            "site-id": process.env.SITE_ID as string,
-          },
-          body: JSON.stringify({
-            name: previewPath,
-            renderedTemplate: renderResponseJson.html,
-            templates: validEmailPaths,
-            parametersDictionary: renderResponseJson.parameterDictionary,
-          }),
-        }
-      );
-
-      const emailPreviewResponseJson = (await emailPreviewResponse.json()) as {
-        html: string;
-      };
-
-      return {
-        statusCode: 200,
-        body: emailPreviewResponseJson.html,
-      };
     }
 
+    const validEmailPaths: string[] = [];
+
+    fs.readdirSync(emailTemplatesDirectory).forEach((template) => {
+      // If index.html or index.mjml exists inside template folder, add to validEmailPaths
+      if (
+        fs.existsSync(join(emailTemplatesDirectory, template, "index.html")) ||
+        fs.existsSync(join(emailTemplatesDirectory, template, "index.mjml"))
+      ) {
+        validEmailPaths.push(template);
+      }
+    });
+
     return {
-      statusCode: 404,
-      body: JSON.stringify({
-        message: "TODO ",
-      }),
+      statusCode: 200,
+      body: `
+        <html>
+          <head>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+          <script>
+            hljs.highlightAll();
+          </script>
+          <link rel="stylesheet" href="https://netlify-integration-emails.netlify.app/main.css">
+          <script>
+            emailPaths =  ${JSON.stringify(validEmailPaths)}
+            template = ${JSON.stringify(emailTemplate?.file)}
+            templateType = ${JSON.stringify(emailTemplate?.type)}
+            siteId = ${JSON.stringify(process.env.SITE_ID)}
+          </script>
+          <script defer src='https://netlify-integration-emails.netlify.app/index.js'></script>
+          </head>
+          <div id='app'></div>
+        </html>
+        `,
+      headers: {
+        "Content-Type": "text/html",
+      },
     };
   }
 
@@ -258,8 +228,8 @@ const handler: Handler = async (event) => {
     };
   }
 
-  const fileContents = getEmailFromPath(fullEmailPath);
-  if (fileContents === undefined) {
+  const email = getEmailFromPath(fullEmailPath);
+  if (email === undefined) {
     console.error(`No email file found in directory: ${fullEmailPath}`);
     return {
       statusCode: 404,
@@ -269,8 +239,27 @@ const handler: Handler = async (event) => {
     };
   }
 
-  const template = Handlebars.compile(fileContents);
-  const renderedTemplate = template(requestBody.parameters);
+  const renderResponse = await fetch(
+    "https://netlify-integration-emails.netlify.app/.netlify/functions/render?showParamaterDictionary=true",
+    {
+      method: "POST",
+      headers: {
+        "site-id": process.env.SITE_ID as string,
+      },
+      body: JSON.stringify({
+        template: email.file,
+        type: email.type,
+        parameters: requestBody.parameters,
+        showParamatersDictionary: false,
+      }),
+    }
+  );
+
+  const renderResponseJson = (await renderResponse.json()) as {
+    html: string;
+  };
+
+  const renderedTemplate = renderResponseJson.html;
 
   const response = await fetch(
     "https://test-netlify-integration-emails.netlify.app/.netlify/functions/send",
