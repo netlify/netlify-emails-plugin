@@ -9,7 +9,7 @@ const capitalizeFirstLetter = (string: string): string =>
 
 export const emailDirectoryHandler = (
   emailDirectory: string
-): { statusCode: number; body: string } => {
+): { statusCode: number; headers: object; body: string } => {
   const emails: string[] = [];
 
   try {
@@ -21,6 +21,7 @@ export const emailDirectoryHandler = (
   } catch (e) {
     return {
       statusCode: 400,
+      headers: {"Content-Type": "text/plain"},
       body: JSON.stringify(
         `Unable to read emails from email directory '${emailDirectory}'. Please ensure this directory exists or change the email directory by updating the NETLIFY_EMAILS_DIRECTORY environment variable.`
       ),
@@ -53,6 +54,7 @@ export const emailDirectoryHandler = (
 
   return {
     statusCode: 200,
+    headers: {"Content-Type": "text/html"},
     body: $.html(),
   };
 };
@@ -66,7 +68,7 @@ export const emailPreviewHandler = (
       }
     | null
     | undefined
-): { statusCode: number; body: string } => {
+): { statusCode: number; headers: object, body: string } => {
   const emails: string[] = [];
   try {
     fs.readdirSync(`./${emailDirectory}`).forEach((folder) => {
@@ -77,6 +79,7 @@ export const emailPreviewHandler = (
   } catch (e) {
     return {
       statusCode: 400,
+      headers: {"Content-Type": "text/plain"},
       body: JSON.stringify(
         `Unable to read emails from email directory '${emailDirectory}'. Please ensure this directory exists or change the email directory by updating the NETLIFY_EMAILS_DIRECTORY environment variable.`
       ),
@@ -91,6 +94,7 @@ export const emailPreviewHandler = (
   } catch (e) {
     return {
       statusCode: 400,
+      headers: {"Content-Type": "text/plain"},
       body: JSON.stringify(
         `Template not found for '${emailDirectory}/${email}'. A file called 'index.html' must exist within this folder.`
       ),
@@ -190,6 +194,7 @@ export const emailPreviewHandler = (
 
   return {
     statusCode: 200,
+    headers: {"Content-Type": "text/html"},
     body: $.html(),
   };
 };
